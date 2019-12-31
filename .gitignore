@@ -1,0 +1,8 @@
+# Fichier de l'IDE
+.idea/
+
+# Supports des TD
+*.pdf
+
+# Node
+node_modules/
