@@ -5,6 +5,7 @@ const parser = require('body-parser');
 
 const http = require('./tools/HTTPCodes');
 const datas = require('./tools/Datas');
+const date = require('date-and-time');
 
 const commande = require('./classes/Commande');
 
@@ -80,22 +81,15 @@ app.get("/commandes/:id", (req, res) => {
  ******/
 
 app.post('/commandes', (req, res) => {
-  const commande = commande(req.body.mail_client, req.body.montant);
-
-  const sql = "INSERT INTO commande(id, mail_client, date_commande, montant) VALUES (?, ?, ?, ?)";
-  const values = datas.values(commande);
-  db.query(sql, values, function (error, result) {
-    if (!error){
-      const uri = `http://localhost:19080/commandes/${commande.id}`;
-      const response = http.success(201);
-      response.location = uri;
-      res.location(uri).status(201).send(commande);
-    }
-    else{
-      console.log(error);
-      res.send('oupsi')
-    }
-  })
+  const commande = new commande(req.body.mail_client, req.body.montant);
+  commande.save()
+      .then(() => {
+        const loc = 'localhost:19080/commandes/' + commande.id;
+        res.status(201).location(loc).json(commande)
+      })
+      .catch(() => {
+        res.status(500).send(http.error(500))
+      })
 });
 
 /******
@@ -106,22 +100,19 @@ app.post('/commandes', (req, res) => {
 
 
 app.put('/commandes/:id', (req, res) => {
-  let sql = "SELECT * FROM commande WHERE id = ?";
-  db.query(sql, req.params.id, (error, result) => {
-    if (!error){
-      let commande = result[0];
-      if (commande){
-        const keys = datas.keys(req.body);
-        const values = datas.values(req.body);
-      }
-      else{
-        res.status(404).send(http.error(404))
-      }
-    }
-    else{
-      res.status(500).send(http.error(500))
-    }
-  });
+  commande.find(req.params.id)
+      .then(data => {
+        let com = new commande(req.body.mail_client, req.body.montant);
+        com.id = data.id;
+        return com.update()
+      })
+      .then((com) => {
+        res.status(200).json(com)
+      })
+      .catch((error) => {
+        console.log(error.message);
+        res.status(error.code).send(http.error(error.code))
+      })
 });
 
 /******
