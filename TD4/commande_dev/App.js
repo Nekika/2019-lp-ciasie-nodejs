@@ -5,9 +5,8 @@ const parser = require('body-parser');
 
 const http = require('./tools/HTTPCodes');
 //const datas = require('./tools/Datas');
-const date = require('date-and-time');
 
-const commande = require('./classes/Commande');
+const Commande = require('./classes/Commande');
 
 // Constantes
 const PORT = 8080;
@@ -53,7 +52,7 @@ app.get("/", (req, res) => {
 
 // Récupération de toutes les commandes
 app.get("/commandes", (req, res) => {
-  commande.all()
+    Commande.all()
       .then(commandes => {
         commandes ? res.json(commandes) : res.status(404).send(http.error(404))
       })
@@ -64,7 +63,7 @@ app.get("/commandes", (req, res) => {
 
 // Récupération d'une commande par son ID
 app.get("/commandes/:id", (req, res) => {
-  commande.find(req.params.id)
+    Commande.find(req.params.id)
       .then(commande => {
         commande ? res.json(commande) : res.status(404).send(http.error(404))
       })
@@ -81,14 +80,15 @@ app.get("/commandes/:id", (req, res) => {
  ******/
 
 app.post('/commandes', (req, res) => {
-  const commande = new commande(req.body.mail_client, req.body.montant);
+  const commande = new Commande(req.body);
   commande.save()
       .then(() => {
-        const loc = 'localhost:19080/commandes/' + commande.id;
-        res.status(201).location(loc).json(commande)
+          const loc = 'localhost:19080/commandes/' + commande.id;
+          res.status(201).location(loc).json(commande)
       })
-      .catch(() => {
-        res.status(500).send(http.error(500))
+      .catch((error) => {
+          console.log(error);
+          res.status(500).send(http.error(500))
       })
 });
 
@@ -100,18 +100,18 @@ app.post('/commandes', (req, res) => {
 
 
 app.put('/commandes/:id', (req, res) => {
-  commande.find(req.params.id)
-      .then(data => {
-        let com = new commande(req.body.mail_client, req.body.montant);
-        com.id = data.id;
-        return com.update()
+  const putDatas = req.body;
+  Commande.find(req.params.id)
+      .then(datas => {
+          const commande = new Commande(datas);
+          return commande.update(putDatas)
       })
       .then((com) => {
-        res.status(200).json(com)
+          res.status(200).json(com)
       })
       .catch((error) => {
-        console.log(error.message);
-        res.status(error.code).send(http.error(error.code))
+          console.log(error);
+          res.status(500).send(http.error(500))
       })
 });
 
