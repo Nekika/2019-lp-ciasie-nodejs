@@ -52,7 +52,6 @@ class Commande{
             const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY date_commande ASC";
             db.query(sql, statut, (error, result) => {
                 if (!error){
-                    console.log(result);
                     resolve(result)
                 }
                 else{
@@ -61,6 +60,30 @@ class Commande{
             })
         })
 
+    }
+
+    /**
+     * Récupère les commandes dans un intervalle
+     * @param start - Le numéro de la ligne de départ
+     * @param size - Le nombre de lignes à récupérer
+     * @return Promise
+     */
+    static findByPage(start, size){
+        let values = [size];
+        if (start > 1){
+            values.unshift(start)
+        }
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT * FROM commande ORDER BY date_commande ASC LIMIT ?";
+            db.query(sql, values, (error, result) => {
+                if (!error){
+                    resolve(result)
+                }
+                else{
+                    reject(error)
+                }
+            })
+        })
     }
 
     save(){

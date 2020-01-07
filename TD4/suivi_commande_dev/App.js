@@ -5,7 +5,6 @@ const parser = require('body-parser');
 
 const http = require('./tools/HTTPCodes');
 
-const Commande = require('./classes/Commande');
 const Collection = require('./classes/Collection');
 
 const PORT = 8080;
@@ -15,11 +14,15 @@ app.use(parser.json());
 
 // Middlewares
 app.use("/:request", function (req, res, next) {
+    const queries = Object.keys(req.query);
     if (req.params.request !== "commandes"){
         res.status(400).send(http.error(400))
     }
-    else{
+    else if(!queries[0] || queries[0] === 'statut' || queries[0] === 'page'){
         next()
+    }
+    else{
+        res.status(400).send(http.error(400))
     }
 });
 
@@ -48,29 +51,15 @@ app.get("/", (req, res) => {
 
 // Récupération de toutes les commandes
 app.get("/commandes", (req, res) => {
-    Commande.all()
-        .then(datas => {
-            let commandes = [];
-            datas.forEach(commande => {
-                commandes.push({
-                    commande: {
-                        id: commande.id,
-                        mail_client: commande.mail_client,
-                        date_commande: commande.date_commande,
-                        date_livraison: commande.date_livraison,
-                        statut: commande.statut
-                    },
-                    links: {
-                        self: {href: "/commandes/" + commande.id}
-                    }
-                })
-            });
-            const collection = new Collection(commandes);
-            res.json(collection)
-        })
-        .catch(() =>{
-            res.status(500).send(http.error(500))
-        })
+    if (req.query.statut){
+        Collection.filteredByStatut(req.query.statut).then(collection => { res.json(collection) })
+    }
+    else if (req.query.page){
+        Collection.filteredByPage(req.query.page).then(collection => { res.json(collection) })
+    }
+    else{
+        Collection.all().then(collection => { res.json(collection) })
+    }
 });
 
 app.listen(PORT);
