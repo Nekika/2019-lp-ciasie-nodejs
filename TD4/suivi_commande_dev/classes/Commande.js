@@ -11,9 +11,10 @@ const db = mysql.createConnection({
 
 class Commande{
     constructor(mail_client, montant){
-        this.id = uuid();                                                           // ID unique
+        this.id = uuid();                                                                 // ID unique
         this.mail_client = mail_client;
-        this.date_commande = date.format(new Date(), 'YYYY-MM-DD'); // Date courante
+        this.date_commande = date.format(new Date(), 'YYYY-MM-DD HH:MM:SS');  // Date courante
+        this.date_livraison = date.format(new Date(), 'YYYY-MM-DD HH:MM:SS');  // Date courante (pour l'instant)
         this.montant = montant;
     }
 
@@ -25,7 +26,7 @@ class Commande{
                     resolve(result)
                 }
                 else{
-                    reject({code: 404, message: error})
+                    reject()
                 }
             })
         })
