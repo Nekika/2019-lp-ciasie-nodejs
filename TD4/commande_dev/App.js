@@ -4,11 +4,9 @@ const express = require("express");
 const parser = require('body-parser');
 
 const http = require('./tools/HTTPCodes');
-
 //const datas = require('./tools/Datas');
 
 const Commande = require('./classes/Commande');
-
 // Constantes
 const PORT = 8080;
 
@@ -53,7 +51,6 @@ app.get("/", (req, res) => {
 
 // Récupération de toutes les commandes
 app.get("/commandes", (req, res) => {
-
     Commande.all()
       .then(commandes => {
         commandes ? res.json(commandes) : res.status(404).send(http.error(404))
@@ -65,7 +62,6 @@ app.get("/commandes", (req, res) => {
 
 // Récupération d'une commande par son ID
 app.get("/commandes/:id", (req, res) => {
-
     Commande.find(req.params.id)
       .then(commande => {
         commande ? res.json(commande) : res.status(404).send(http.error(404))
@@ -83,7 +79,6 @@ app.get("/commandes/:id", (req, res) => {
  ******/
 
 app.post('/commandes', (req, res) => {
-
   const commande = new Commande(req.body);
   commande.save()
       .then(() => {
@@ -104,7 +99,6 @@ app.post('/commandes', (req, res) => {
 
 
 app.put('/commandes/:id', (req, res) => {
-
   const putDatas = req.body;
   Commande.find(req.params.id)
       .then(datas => {
