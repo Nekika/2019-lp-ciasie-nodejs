@@ -5,6 +5,9 @@ networks:
     driver: bridge
 
 services:
+  #############################
+  # API Commandes
+  #############################
   api.commande:
     image: node
     environment:
@@ -20,6 +23,25 @@ services:
       - lbs.net
     links:
       - mysql.commande:dbcom
+
+      #############################
+      # API Suivi des Commandes
+      #############################
+      api.suivi_commande:
+        image: node
+        environment:
+          - NODE_ENV=dev
+          - VHOST_HOSTNAME=api.suivi_commande.local
+        ports:
+          - "19081:8080"
+        volumes:
+          - ./suivi_commande_dev:/app/suivi_commande_api
+        working_dir: /app/suivi_commande_api
+        command: npm run dev
+        networks:
+          - lbs.net
+        links:
+          - mysql.commande:dbcom
 
   #############################
   # mysql commande  + adminer
