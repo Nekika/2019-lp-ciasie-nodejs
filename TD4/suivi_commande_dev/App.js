@@ -18,7 +18,13 @@ app.use("/:request", function (req, res, next) {
     if (req.params.request !== "commandes"){
         res.status(400).send(http.error(400))
     }
-    else if(!queries[0] || queries[0] === 'statut' || queries[0] === 'page'){
+    else if(queries.length === 0){
+        next()
+    }
+    else if(queries.length === 1 && (queries[0] === 'statut' || queries[0] === 'page')){
+        next( )
+    }
+    else if(queries.length === 2 && queries.includes('size') && queries.includes('page')){
         next()
     }
     else{
@@ -55,7 +61,11 @@ app.get("/commandes", (req, res) => {
         Collection.filteredByStatut(req.query.statut).then(collection => { res.json(collection) })
     }
     else if (req.query.page){
-        Collection.filteredByPage(req.query.page).then(collection => { res.json(collection) })
+        let size = req.query.size;
+        if (typeof size === 'string'){
+            size =  Number.parseInt(size, 10)
+        }
+        Collection.filteredByPage(req.query.page, size).then(collection => { res.json(collection) })
     }
     else{
         Collection.all().then(collection => { res.json(collection) })

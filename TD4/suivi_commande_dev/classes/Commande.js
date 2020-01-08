@@ -69,13 +69,9 @@ class Commande{
      * @return Promise
      */
     static findByPage(start, size){
-        let values = [size];
-        if (start > 1){
-            values.unshift(start)
-        }
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY date_commande ASC LIMIT ?";
-            db.query(sql, values, (error, result) => {
+            const sql = "SELECT * FROM commande ORDER BY date_commande ASC LIMIT ?, ?";
+            db.query(sql, [start, size], (error, result) => {
                 if (!error){
                     resolve(result)
                 }

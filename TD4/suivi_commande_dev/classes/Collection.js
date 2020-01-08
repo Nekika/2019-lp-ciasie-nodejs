@@ -1,9 +1,10 @@
 const Commande = require('./Commande');
 
 class Collection {
-    constructor(commandes){
+    constructor(commandes, size = 10){
         this.type = "collection";
         this.count = commandes.length;
+        this.size = size;
         this.commandes = commandes;
     }
 
@@ -49,9 +50,8 @@ class Collection {
             })
     }
 
-    static filteredByPage(page){
-        const start = (page - 1) * 10 + 1; // Le numéro de ligne de départ
-        const size = 10; // Nombre de commandes à afficher
+    static filteredByPage(page, size = 10){
+        const start = (page - 1) * 10; // Le numéro de ligne de départ
         return Commande.findByPage(start, size)
             .then(datas => {
                 let commandes = [];
@@ -65,7 +65,7 @@ class Collection {
                         }
                     })
                 });
-                return new Collection(commandes)
+                return new Collection(commandes, size)
             })
             .catch((error) =>{
                 return error
