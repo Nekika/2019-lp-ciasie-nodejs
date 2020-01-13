@@ -1,0 +1,36 @@
+version: "2"
+
+networks: 
+  td5.net:
+    driver: bridge
+
+services:
+  node:
+    image: node
+    container_name: node
+    user: "node"
+    working_dir: /app/client
+    volumes:
+      - .:/app/client
+    command: "npm run dev"
+    ports:
+      - "80:8080"
+    networks: 
+      - 'td5.net'
+    links: 
+      - database:mongodb
+      
+  database:
+    image: mongo
+    restart: always
+    container_name: database
+    environment:
+        - MONGO_INITDB_DATABASE=Td5
+        - MONGO_INITDB_USERNAME=root
+        - MONGO_INITDB_PASSWORD=example
+    volumes:
+        - ./mongo-volume:/data/db
+    ports:
+        - '27017:27017'
+    networks: 
+        - 'td5.net'
