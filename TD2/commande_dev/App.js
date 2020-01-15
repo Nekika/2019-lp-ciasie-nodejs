@@ -75,12 +75,7 @@ app.get("/", (req, res) => {
 });
 
 // Récupération de toutes les commandes
-app.get("/:cmd", (req, res) => {
-  if (req.params.cmd !== "commandes"){
-    buildError(400);
-    res.status(400).send(body)
-  }
-  else{
+app.get("/commandes", (req, res) => {
     const sql = "SELECT * FROM commandes";
     db.query(sql, (error, result) => {
       if (!error){
@@ -91,16 +86,10 @@ app.get("/:cmd", (req, res) => {
         res.status(500).send(body)
       }
     })
-  }
 });
 
 // Récupération d'une commande par son ID
-app.get("/:cmd/:id", (req, res) => {
-  if (req.params.cmd !== "commandes"){
-    buildError(400);
-    res.status(400).send(body)
-  }
-  else{
+app.get("/commandes/:id", (req, res) => {
     const sql = "SELECT * FROM commandes WHERE id = ?";
     db.query(sql, req.params.id, (error, result) => {
       if (!error){
@@ -114,7 +103,6 @@ app.get("/:cmd/:id", (req, res) => {
       buildError(500);
       res.status(500).send(body)
     })
-  }
 });
 
 
@@ -124,12 +112,7 @@ app.get("/:cmd/:id", (req, res) => {
  *
  ******/
 
-app.post('/:cmd', (req, res) => {
-  if (req.params.cmd !== "commandes"){
-    buildError(405);
-    res.status(405).send(body);
-  }
-  else{
+app.post('/commandes', (req, res) => {
     const data = req.body;
     data.date_commande = date.format(new Date(), 'YYYY-MM-DD');
     data.id = "zinzin-123";
@@ -149,9 +132,27 @@ app.post('/:cmd', (req, res) => {
         res.status(9999).send('oupsi')
       }
     })
-  }
 });
 
+
+app.all('*', (req, res) => {
+  res.status(400).json({
+      "type": "error",
+      "error": 400,
+      "message": "l'uri n'existe pas"
+  });
+});
+
+app.use((error, req, res, next) => {
+  console.error(error.stack);
+  if(error) {
+    return res.status(500).json({
+      "type": "error",
+      "error": 500,
+      "message": "Erreur interne"
+    });
+  }
+});
 
 /******
  *
