@@ -154,6 +154,15 @@ app.use((error, req, res, next) => {
   }
 });
 
+
+app.all('*', (req, res) => {
+  res.status(400).send(http.error(400))
+});
+
+app.use((error, req, res, next) => {
+  res.status(500).send(http.error(500))
+});
+
 /******
  *
  * Listening

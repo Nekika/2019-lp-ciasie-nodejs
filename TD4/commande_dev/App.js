@@ -15,25 +15,6 @@ const PORT = 8080;
 const app = express();
 app.use(parser.json());
 
-// Middlewares
-app.use("/:request", function (req, res, next) {
-  if (req.params.request !== "commandes"){
-    res.status(400).send(http.error(400))
-  }
-  else{
-    next()
-  }
-});
-
-app.use("/:request/:id", function (req, res, next) {
-  if (req.params.request !== "commandes"){
-    res.status(400).send(http.error(400))
-  }
-  else{
-    next()
-  }
-});
-
 
 /* ----------------- Routing  ----------------- */
 
@@ -117,6 +98,15 @@ app.put('/commandes/:id', (req, res) => {
           console.log(error);
           res.status(500).send(http.error(500))
       })
+});
+
+
+app.all('*', (req, res) => {
+  res.status(400).send(http.error(400))
+});
+
+app.use((error, req, res, next) => {
+  res.status(500).send(http.error(500))
 });
 
 /******
