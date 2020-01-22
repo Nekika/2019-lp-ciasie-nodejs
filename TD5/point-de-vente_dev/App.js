@@ -50,7 +50,7 @@ app.get('/commandes/:id', (req, res) => {
         if(!result) {
             return res.status(404).send(http.error(404));
         }
-        const result = {
+        const output = {
             type: "resources",
             links: {
                 self: `/commandes/${id}`,
@@ -69,6 +69,8 @@ app.get('/commandes/:id', (req, res) => {
                 //]
             }
         };
+
+        return res.json(output);
     })
     .catch((error) => {
         throw new Error(error);
