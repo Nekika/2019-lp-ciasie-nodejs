@@ -18,7 +18,7 @@ INSERT INTO `commande` (`id`, `created_at`, `updated_at`, `livraison`, `nom`, `m
 ('6d90caa2-b74a-4575-9b8a-bf237306d48b',	'2019-11-08 13:45:56',	'2019-11-08 13:45:56',	'2019-11-10 22:51:31',	'Roussel',	'Roussel@ifrance.com',	42.00,	NULL,	'1942de0de15222d581f5081fa432ce3825113c4105a284b344c9f106ca44a55c',	NULL,	NULL,	NULL,	NULL,	1),
 ('06d23c7f-3a7d-4499-b7f1-0bb53ae40495',	'2019-11-08 13:45:56',	'2019-11-08 13:45:56',	'2019-11-09 13:06:06',	'Collet',	'Collet@tiscali.fr',	5.75,	NULL,	'ec6b9ef90e6dec5948841cfd3cacf14427a9ca3fde2cd4d5ecbb125682633730',	NULL,	NULL,	NULL,	NULL,	1);
 
-INSERT INTO `item` (`id`, `uri`, `libelle`, `tarif`, `quantite`, `command_id`) VALUES
+INSERT INTO `item` (`id`, `uri`, `libelle`, `tarif`, `quantite`, `command_id`) VALUES 
 (3012,	'/sandwichs/s19005',	'la mer',	5.25,	2,	'cdf6302b-940b-4348-b913-3cb2052bf042'),
 (3013,	'/sandwichs/s19004',	'le forestier',	5.75,	3,	'cdf6302b-940b-4348-b913-3cb2052bf042'),
 (3014,	'/sandwichs/s19001',	'le bucheron',	6.00,	1,	'cdf6302b-940b-4348-b913-3cb2052bf042'),
