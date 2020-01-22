@@ -13,7 +13,7 @@ class Commande{
     constructor(datas){
         (datas.id) ? this.id = datas.id : this.id = uuid();
         this.mail = datas.mail;
-        (datas.date_commande) ? this.date_commande = datas.date_commande : this.date_commande = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
+        (datas.created_at) ? this.created_at = datas.created_at : this.created_at = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         (datas.date_livraison) ? this.date_livraison = datas.date_livraison : this.date_livraison = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         this.montant = datas.montant;
         this.statut = datas.statut;
@@ -21,7 +21,7 @@ class Commande{
 
     static all(){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY date_commande ASC";
+            const sql = "SELECT * FROM commande ORDER BY created_at ASC";
             db.query(sql, (error, result) => {
                 if (!error){
                     resolve(result)
@@ -49,7 +49,7 @@ class Commande{
 
     static findByStatut(statut){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY date_commande ASC";
+            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY created_at ASC";
             db.query(sql, statut, (error, result) => {
                 if (!error){
                     resolve(result)
@@ -70,7 +70,7 @@ class Commande{
      */
     static findByPage(start, size){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY date_commande ASC LIMIT ?, ?";
+            const sql = "SELECT * FROM commande ORDER BY created_at ASC LIMIT ?, ?";
             db.query(sql, [start, size], (error, result) => {
                 if (!error){
                     resolve(result)
