@@ -28,13 +28,13 @@ app.get("/", (req, res) => {
 
 // Récupération de toutes les commandes
 app.get("/commandes", (req, res) => {
-    if (req.query.statut){
-        Collection.filteredByStatut(req.query.statut).then(collection => { res.json(collection) })
+    if (req.query.status){
+        Collection.filteredByStatus(req.query.status).then(collection => { res.json(collection) })
     }
     else if (req.query.page){
-        let size = req.query.size;
-        if (typeof size === 'string'){
-            size =  Number.parseInt(size, 10)
+        let size = 10;
+        if (req.query.size)  {
+            size = Number.parseInt(req.query.size, 10)
         }
         Collection.filteredByPage(req.query.page, size).then(collection => { res.json(collection) })
     }
@@ -52,3 +52,4 @@ app.use((error, req, res, next) => {
 });
 
 app.listen(PORT);
+

@@ -17,7 +17,7 @@ class Commande{
         (datas.created_at) ? this.created_at = datas.created_at : this.created_at = date.format(new Date(), "YYYY-MM-DD hh:mm:ss");
         (datas.livraison) ? this.livraison = datas.livraison : this.livraison = date.format(new Date(), "YYYY-MM-DD hh:mm:ss");
         this.montant = datas.montant;
-        (this.status) ? this.status = datas.status : this.status = 1
+        (datas.status) ? this.status = datas.status : this.status = 1
     }
 
     static all(){

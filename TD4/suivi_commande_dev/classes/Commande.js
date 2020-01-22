@@ -12,16 +12,31 @@ const db = mysql.createConnection({
 class Commande{
     constructor(datas){
         (datas.id) ? this.id = datas.id : this.id = uuid();
-        this.mail_client = datas.mail_client;
-        (datas.date_commande) ? this.date_commande = datas.date_commande : this.date_commande = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
-        (datas.date_livraison) ? this.date_livraison = datas.date_livraison : this.date_livraison = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
+        this.mail = datas.mail;
+        this.nom = datas.nom;
+        (datas.created_at) ? this.created_at = datas.created_at : this.created_at = date.format(new Date(), "YYYY-MM-DD hh:mm:ss");
+        (datas.livraison) ? this.livraison = datas.livraison : this.livraison = date.format(new Date(), "YYYY-MM-DD hh:mm:ss");
         this.montant = datas.montant;
-        this.statut = datas.statut;
+        (datas.status) ? this.status = datas.status : this.status = 1
+    }
+
+    static countAll(){
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT COUNT(*) as count FROM commande";
+            db.query(sql, (error, result) => {
+                if (!error){
+                    resolve(result[0])
+                }
+                else{
+                    reject(error)
+                }
+            })
+        })
     }
 
     static all(){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY date_commande ASC";
+            const sql = "SELECT * FROM commande ORDER BY created_at ASC";
             db.query(sql, (error, result) => {
                 if (!error){
                     resolve(result)
@@ -47,10 +62,10 @@ class Commande{
         })
     }
 
-    static findByStatut(statut){
+    static findByStatus(status){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY date_commande ASC";
-            db.query(sql, statut, (error, result) => {
+            const sql = "SELECT * FROM commande WHERE status = ? ORDER BY created_at ASC";
+            db.query(sql, status, (error, result) => {
                 if (!error){
                     resolve(result)
                 }
@@ -70,7 +85,7 @@ class Commande{
      */
     static findByPage(start, size){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY date_commande ASC LIMIT ?, ?";
+            const sql = "SELECT * FROM commande ORDER BY created_at ASC LIMIT ?, ?";
             db.query(sql, [start, size], (error, result) => {
                 if (!error){
                     resolve(result)
@@ -103,9 +118,8 @@ class Commande{
             }
         }
         return new Promise((resolve, reject) => {
-            const sql = "UPDATE commande SET mail_client = ?, date_livraison = ?, montant = ?, statut = ? WHERE id = ?";
-            const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.id]
-            db.query(sql, values, (error) => {
+            const sql = "UPDATE commande SET ? WHERE id = ?";
+            db.query(sql, [this, this.id], (error) => {
                 if(!error){
                     resolve(this)
                 }
