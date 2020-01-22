@@ -47,7 +47,7 @@ services:
   # mysql commande  + adminer
   #############################
   mysql.commande:
-    image: nekika/mysql-lbs:latest
+    image: mariadb:latest
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci
     environment:
       - MYSQL_ROOT_PASSWORD=comroot123
