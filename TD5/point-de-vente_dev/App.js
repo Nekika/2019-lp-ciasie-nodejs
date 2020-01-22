@@ -43,6 +43,38 @@ app.get("/commandes", (req, res) => {
     }
 });
 
+app.get('/commandes/:id', (req, res) => {
+    const id = req.params.id;
+    Commande.find(id)
+    .then((result) => {
+        if(!result) {
+            return res.status(404).send(http.error(404));
+        }
+        const result = {
+            type: "resources",
+            links: {
+                self: `/commandes/${id}`,
+                items: `/commandes/${id}/items`
+            },
+            command: {
+                id: id,
+                created_at: result.created_at,
+                livraison: result.livraison,
+                nom: result.nom,
+                mail: result.mail,
+                montant: result.montant,
+                //TODO 
+                //items: [
+                //
+                //]
+            }
+        };
+    })
+    .catch((error) => {
+        throw new Error(error);
+    });
+});
+
 app.all('*', (req, res) => {
     res.status(400).send(http.error(400))
 });
