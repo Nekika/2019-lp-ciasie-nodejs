@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node App.js",
-    "dev": "npm i nodemon && nodemon App.js"
+    "dev": "nodemon App.js"
   },
   "keywords": [],
   "author": "Nekika",

@@ -6,6 +6,7 @@ const parser = require('body-parser');
 const http = require('./tools/HTTPCodes');
 
 const Collection = require('./classes/Collection');
+const Commande = require('./classes/Commande');
 
 const PORT = 8080;
 
@@ -82,6 +83,7 @@ app.all('*', (req, res) => {
 });
 
 app.use((error, req, res, next) => {
+    console.log(error);
     res.status(500).send(http.error(500))
 });
 

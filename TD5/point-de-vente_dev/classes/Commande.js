@@ -12,7 +12,7 @@ const db = mysql.createConnection({
 class Commande{
     constructor(datas){
         (datas.id) ? this.id = datas.id : this.id = uuid();
-        this.mail_client = datas.mail_client;
+        this.mail = datas.mail;
         (datas.date_commande) ? this.date_commande = datas.date_commande : this.date_commande = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         (datas.date_livraison) ? this.date_livraison = datas.date_livraison : this.date_livraison = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         this.montant = datas.montant;
@@ -103,8 +103,8 @@ class Commande{
             }
         }
         return new Promise((resolve, reject) => {
-            const sql = "UPDATE commande SET mail_client = ?, date_livraison = ?, montant = ?, statut = ? WHERE id = ?";
-            const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.id]
+            const sql = "UPDATE commande SET mail = ?, date_livraison = ?, montant = ?, statut = ? WHERE id = ?";
+            const values = [this.mail, this.date_livraison, this.montant, this.statut, this.id]
             db.query(sql, values, (error) => {
                 if(!error){
                     resolve(this)
