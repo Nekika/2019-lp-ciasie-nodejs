@@ -7,6 +7,7 @@ const http = require('./tools/HTTPCodes');
 
 const Collection = require('./classes/Collection');
 const Commande = require('./classes/Commande');
+const Item = require('./classes/Item');
 
 const PORT = 8080;
 
@@ -64,14 +65,27 @@ app.get('/commandes/:id', (req, res) => {
                 nom: result.nom,
                 mail: result.mail,
                 montant: result.montant,
-                //TODO 
-                //items: [
-                //
-                //]
+                items: []
             }
         };
+        Item.findByCommande(id).then((result) => {
+            if(!result) {
+                return res.status(404).send(http.error(404));
+            }
+            result.forEach((item) => {
+                const toadd = {
+                    uri: item.uri,
+                    libelle: item.libelle,
+                    tarif: item.tarif,
+                    quantite: item.quantite,
+                }
+                output.command.items.push(toadd)
+            })
+            return res.json(output);
 
-        return res.json(output);
+        }).catch((error) => {
+            throw new Error(error);
+        });
     })
     .catch((error) => {
         throw new Error(error);
