@@ -29,7 +29,7 @@ services:
     ports:
       - "19180:8080"
     volumes:
-      - ./catalogue_dev:/app/catalogue_api
+      - ./catalogue_dev:/app/catalogue_api 
     working_dir: /app/catalogue_api
     command: npm run dev
     networks:
@@ -37,20 +37,20 @@ services:
     links:
       - mongo.cat:dbcat
 
-  api.point_vente:
-    image: node
-    environment:
-      - VHOST_HOSTNAME=api.point_vente.local
-    ports:
-      - "19280:8080"
-    volumes:
-      - ./point-de-vente_dev:/app/point_vente_api
-    working_dir: /app/point_vente_api
-    command: npm run dev
-    networks:
-      - lbs.net
-    links:
-      - mysql.commande:dbcom
+  # api.point_vente:
+  #   image: node
+  #   environment:
+  #     - VHOST_HOSTNAME=api.point_vente.local
+  #   ports:
+  #     - "19280:8080"
+  #   volumes:
+  #     - ./point-de-vente_dev:/app/point_vente_api
+  #   working_dir: /app/point_vente_api
+  #   command: npm run dev
+  #   networks:
+  #     - lbs.net
+  #   links:
+  #     - mysql.commande:dbcom
 
   #############################
   # mysql commande  + adminer
@@ -83,6 +83,7 @@ services:
   ###############################################
   mongo.cat:
     image: mongo:latest
+    restart: always
     volumes:
       - ./catalogue_api/data:/var/data
     working_dir: /var/data

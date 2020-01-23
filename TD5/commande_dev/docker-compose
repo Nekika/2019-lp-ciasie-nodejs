@@ -1,0 +1,30 @@
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                      NAMES
+189718b2e39e        mongo-express:latest   "tini -- /docker-ent…"   6 minutes ago       Up 3 minutes        0.0.0.0:8081->8081/tcp     td5_mongo-express_1
+fdc23a39da6c        node                   "docker-entrypoint.s…"   6 minutes ago       Up 3 minutes        0.0.0.0:19180->8080/tcp    td5_api.catalogue_1
+0eeaad96bdc9        mongo:latest           "docker-entrypoint.s…"   7 minutes ago       Up 3 minutes        0.0.0.0:27018->27017/tcp   td5_mongo.cat_1
+baf12a0de66d        adminer                "entrypoint.sh docke…"   3 hours ago         Up 3 minutes        0.0.0.0:8080->8080/tcp     td5_adminer_1
+58fdaf91220a        node                   "docker-entrypoint.s…"   3 hours ago         Up 3 minutes        0.0.0.0:19080->8080/tcp    td5_api.commande_1
+97478369d867        mariadb:latest         "docker-entrypoint.s…"   3 hours ago         Up 3 minutes        0.0.0.0:3307->3306/tcp     td5_mysql.commande_1
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                      NAMES
+189718b2e39e        mongo-express:latest   "tini -- /docker-ent…"   7 minutes ago       Up 3 minutes        0.0.0.0:8081->8081/tcp     td5_mongo-express_1
+fdc23a39da6c        node                   "docker-entrypoint.s…"   7 minutes ago       Up 3 minutes        0.0.0.0:19180->8080/tcp    td5_api.catalogue_1
+0eeaad96bdc9        mongo:latest           "docker-entrypoint.s…"   7 minutes ago       Up 3 minutes        0.0.0.0:27018->27017/tcp   td5_mongo.cat_1
+baf12a0de66d        adminer                "entrypoint.sh docke…"   3 hours ago         Up 3 minutes        0.0.0.0:8080->8080/tcp     td5_adminer_1
+58fdaf91220a        node                   "docker-entrypoint.s…"   3 hours ago         Up 3 minutes        0.0.0.0:19080->8080/tcp    td5_api.commande_1
+97478369d867        mariadb:latest         "docker-entrypoint.s…"   3 hours ago         Up 3 minutes        0.0.0.0:3307->3306/tcp     td5_mysql.commande_1
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                      NAMES
+189718b2e39e        mongo-express:latest   "tini -- /docker-ent…"   7 minutes ago       Up 3 minutes        0.0.0.0:8081->8081/tcp     td5_mongo-express_1
+fdc23a39da6c        node                   "docker-entrypoint.s…"   7 minutes ago       Up 3 minutes        0.0.0.0:19180->8080/tcp    td5_api.catalogue_1
+0eeaad96bdc9        mongo:latest           "docker-entrypoint.s…"   7 minutes ago       Up 4 minutes        0.0.0.0:27018->27017/tcp   td5_mongo.cat_1
+baf12a0de66d        adminer                "entrypoint.sh docke…"   3 hours ago         Up 3 minutes        0.0.0.0:8080->8080/tcp     td5_adminer_1
+58fdaf91220a        node                   "docker-entrypoint.s…"   3 hours ago         Up 3 minutes        0.0.0.0:19080->8080/tcp    td5_api.commande_1
+97478369d867        mariadb:latest         "docker-entrypoint.s…"   3 hours ago         Up 3 minutes        0.0.0.0:3307->3306/tcp     td5_mysql.commande_1
+        Name                       Command                State              Ports          
+--------------------------------------------------------------------------------------------
+td5_adminer_1           entrypoint.sh docker-php-e ...   Up         0.0.0.0:8080->8080/tcp  
+td5_api.catalogue_1     docker-entrypoint.sh npm r ...   Up         0.0.0.0:19180->8080/tcp 
+td5_api.commande_1      docker-entrypoint.sh npm r ...   Up         0.0.0.0:19080->8080/tcp 
+td5_api.point_vente_1   docker-entrypoint.sh npm r ...   Exit 254                           
+td5_mongo-express_1     tini -- /docker-entrypoint ...   Up         0.0.0.0:8081->8081/tcp  
+td5_mongo.cat_1         docker-entrypoint.sh mongod      Up         0.0.0.0:27018->27017/tcp
+td5_mysql.commande_1    docker-entrypoint.sh --def ...   Up         0.0.0.0:3307->3306/tcp  
