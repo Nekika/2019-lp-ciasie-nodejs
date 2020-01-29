@@ -47,11 +47,21 @@ app.get("/categories/:id/sandwichs", (req, res) => {
             res.status(500).send(err);
         }
         const categorieName = categorie.nom;
-        Sandwich.find({ categorie: categorieName }, (err, sandwich) => {
+        Sandwich.find({ categorie: categorieName }, (err, sandwiches) => {
             if (err) {
                 res.status(500).send(err);
             }
-            res.status(200).json(sandwich);
+            const collection = {
+                type: "collection",
+                count: sandwiches.length,
+                sandwiches: [],
+            };
+            sandwiches.forEach((sandwich)=>{
+                collection.sandwiches.push({
+                    sandwich: sandwich
+                });
+            })
+            res.status(200).json(collection);
         });
     });
 });
