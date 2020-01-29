@@ -84,14 +84,17 @@ services:
   mongo.cat:
     image: mongo:latest
     volumes:
-      - ./catalogue_api/data:/var/data
-    working_dir: /var/data
+      - ./catalogue_dev/init-mongo/:/docker-entrypoint-initdb.d/
+    environment:
+      MONGO_INITDB_DATABASE: catalogue
     networks:
       - lbs.net
     ports:
       - 27018:27017
   mongo-express:
     image: mongo-express:latest
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo.cat
     networks:
       - lbs.net
     ports:
