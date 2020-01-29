@@ -70,7 +70,7 @@ app.get("/categories/:id/sandwichs", (req, res) => {
 
 //récupération de toutes les catégories
 app.get("/categories/:id", (req, res) => {
-    Categorie.find({}, (err, result) => {
+    Categorie.find({id:req.params.id}, (err, result) => {
         if (err) {
             res.status(500).send(err);
         }
