@@ -1,0 +1,22 @@
+{
+  "name": "catalogue_dev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "App.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.2",
+    "mongoose": "^5.8.10",
+    "nodemon": "^2.0.2",
+    "uuid": "^3.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node App.js",
+    "dev": "nodemon App.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
