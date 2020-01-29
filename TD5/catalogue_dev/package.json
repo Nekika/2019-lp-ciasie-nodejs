@@ -1,0 +1,24 @@
+{
+  "name": "commande",
+  "version": "1.0.0",
+  "description": "",
+  "main": "zinzin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node zinzin.js",
+    "dev": "npm i nodemon && nodemon zinzin.js"
+  },
+  "keywords": [],
+  "author": "Nekika",
+  "license": "ISC",
+  "dependencies": {
+    "date-and-time": "^0.11.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.8.10",
+    "mysql": "^2.17.1",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
