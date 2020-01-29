@@ -35,7 +35,6 @@ app.get("/categories", (req, res) => {
         if (err) {
             res.status(500).send(err);
         }
-        console.log(result);
         res.status(200).json(result);
     });
 });
@@ -44,12 +43,15 @@ app.get("/categories", (req, res) => {
 app.get("/categories/:id/sandwichs", (req, res) => {
     Categorie.find({ id: req.params.id }, (err, categorie) => {
         if (err) {
-            res.status(500).send(err);
+            return res.status(500).send(http.error(500));
+        }
+        if (categorie.length !== 1) {
+            return res.status(404).send(http.error(404));
         }
         const categorieName = categorie[0].nom;
         Sandwich.find({ categories: categorieName }, (err, sandwiches) => {
             if (err) {
-                res.status(500).send(err);
+                res.status(500).send(http.error(500));
             }
             const collection = {
                 type: "collection",
@@ -63,6 +65,26 @@ app.get("/categories/:id/sandwichs", (req, res) => {
             })
             res.status(200).json(collection);
         });
+    });
+});
+
+//récupération de toutes les catégories
+app.get("/categories/:id", (req, res) => {
+    Categorie.find({}, (err, result) => {
+        if (err) {
+            res.status(500).send(err);
+        }
+        const categorie = {
+            type: "ressource",
+            date: new Date().toLocaleDateString(),
+            categorie: result,
+            links: {
+                sandwichs: {
+                    href: `${req.originalUrl}/`,
+                }
+            }
+        }
+        res.status(200).json(categorie);
     });
 });
 
