@@ -15,7 +15,7 @@ const schema = new mongoose.Schema({
     description: { type: String, text: true },
     type_pain: { type: String, text: true },
     image: { type: image },
-    categorie: { type: String, text: true },
+    categories: { type: String, text: true },
     prix: { type: Number },
 }, { collection: 'sandwich'});
 

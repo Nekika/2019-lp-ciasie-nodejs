@@ -46,8 +46,8 @@ app.get("/categories/:id/sandwichs", (req, res) => {
         if (err) {
             res.status(500).send(err);
         }
-        const categorieName = categorie.nom;
-        Sandwich.find({ categorie: categorieName }, (err, sandwiches) => {
+        const categorieName = categorie[0].nom;
+        Sandwich.find({ categories: categorieName }, (err, sandwiches) => {
             if (err) {
                 res.status(500).send(err);
             }
