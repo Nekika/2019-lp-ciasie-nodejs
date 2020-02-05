@@ -5,7 +5,7 @@ const parser = require('body-parser');
 const crypto = require("crypto");
 const http = require('./tools/HTTPCodes');
 
-
+const Item = require('./classes/Item');
 const Commande = require('./classes/Commande');
 // Constantes
 const PORT = 8080;
@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 
 // Récupération de toutes les commandes
 app.get("/commandes", (req, res) => {
-
+Item
     Commande.all()
       .then(commandes => {
         commandes ? res.json(commandes) : res.status(404).send(http.error(404))
@@ -43,17 +43,52 @@ app.get("/commandes", (req, res) => {
 });
 
 // Récupération d'une commande par son ID
-app.get("/commandes/:id", (req, res) => {
+app.get('/commandes/:id', (req, res) => {
+    const id = req.params.id;
+    Commande.find(id)
+        .then((result) => {
+            if(!result) {
+                return res.status(404).send(http.error(404));
+            }
+            const output = {
+                type: "resources",
+                links: {
+                    self: `/commandes/${id}`,
+                    items: `/commandes/${id}/items`
+                },
+                command: {
+                    id: id,
+                    created_at: result.created_at,
+                    livraison: result.livraison,
+                    nom: result.nom,
+                    mail: result.mail,
+                    montant: result.montant,
+                    items: []
+                }
+            };
+            Item.findByCommande(id).then((result) => {
+                if(!result) {
+                    return res.status(404).send(http.error(404));
+                }
+                result.forEach((item) => {
+                    const toadd = {
+                        uri: item.uri,
+                        libelle: item.libelle,
+                        tarif: item.tarif,
+                        quantite: item.quantite,
+                    }
+                    output.command.items.push(toadd)
+                })
+                return res.json(output);
 
-    Commande.find(req.params.id)
-      .then(commande => {
-        commande ? res.json(commande) : res.status(404).send(http.error(404))
-      })
-      .catch(() => {
-        res.status(500).send(http.error(500))
-      })
+            }).catch((error) => {
+                throw new Error(error);
+            });
+        })
+        .catch((error) => {
+            throw new Error(error);
+        });
 });
-
 
 /******
  *

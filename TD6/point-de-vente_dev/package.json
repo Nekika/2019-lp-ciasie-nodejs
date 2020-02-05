@@ -1,7 +1,6 @@
 {
   "name": "commande",
   "version": "1.0.0",
-  "description": "",
   "main": "App.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -24,5 +23,6 @@
     "@babel/node": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
     "nodemon": "^2.0.2"
-  }
+  },
+  "description": ""
 }
