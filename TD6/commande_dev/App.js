@@ -43,12 +43,11 @@ Item
 });
 
 // Récupération d'une commande par son ID
-<<<<<<< HEAD
 app.get('/commandes/:id', (req, res) => {
     const id = req.params.id;
     Commande.find(id)
         .then((result) => {
-            if(!result) {
+            if (!result) {
                 return res.status(404).send(http.error(404));
             }
             const output = {
@@ -68,7 +67,7 @@ app.get('/commandes/:id', (req, res) => {
                 }
             };
             Item.findByCommande(id).then((result) => {
-                if(!result) {
+                if (!result) {
                     return res.status(404).send(http.error(404));
                 }
                 result.forEach((item) => {
@@ -89,6 +88,7 @@ app.get('/commandes/:id', (req, res) => {
         .catch((error) => {
             throw new Error(error);
         });
+});
 
 /******
  *
