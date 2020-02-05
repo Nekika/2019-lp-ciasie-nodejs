@@ -17,6 +17,7 @@ class Commande{
         (datas.date_livraison) ? this.date_livraison = datas.date_livraison : this.date_livraison = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         this.montant = datas.montant;
         this.statut = datas.statut;
+        this.token = datas.token;
     }
 
     static all(){
