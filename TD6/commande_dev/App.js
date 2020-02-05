@@ -43,12 +43,15 @@ app.get("/commandes", (req, res) => {
 
 // Récupération d'une commande par son ID
 app.get('/commandes/:id', (req, res) => {
+    let token = req.query.token ? req.query.token : req.headers.authorization;
+    if (!token) return res.status(401).send(http.error(401));
     const id = req.params.id;
     Commande.find(id)
         .then((result) => {
             if (!result) {
                 return res.status(404).send(http.error(404));
             }
+            if(result.token !== token) return res.status(403).send(http.error(403));
             const output = {
                 type: "resources",
                 links: {
@@ -71,13 +74,13 @@ app.get('/commandes/:id', (req, res) => {
                     return res.status(404).send(http.error(404));
                 }
                 result.forEach((item) => {
-                    const toadd = {
+                    const toAdd = {
                         uri: item.uri,
                         libelle: item.libelle,
                         tarif: item.tarif,
                         quantite: item.quantite,
                     }
-                    output.command.items.push(toadd)
+                    output.command.items.push(toAdd)
                 })
                 return res.json(output);
 
