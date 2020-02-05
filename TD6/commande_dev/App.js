@@ -45,8 +45,11 @@ app.get("/commandes", (req, res) => {
 // Récupération d'une commande par son ID
 app.get("/commandes/:id", (req, res) => {
 
+    let token = req.query.token ? req.query.token : req.headers.authorization;
+    if (!token) return res.status(401).send(http.error(401));
     Commande.find(req.params.id)
       .then(commande => {
+        if(commande.token !== token) return res.status(403).send(http.error(403));
         commande ? res.json(commande) : res.status(404).send(http.error(404))
       })
       .catch(() => {
