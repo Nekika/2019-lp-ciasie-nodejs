@@ -12,17 +12,16 @@ const db = mysql.createConnection({
 class Commande{
     constructor(datas){
         (datas.id) ? this.id = datas.id : this.id = uuid();
-        this.mail_client = datas.mail_client;
-        (datas.date_commande) ? this.date_commande = datas.date_commande : this.date_commande = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
+        this.mail = datas.mail;
+        (datas.created_at) ? this.created_at = datas.created_at : this.created_at = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         (datas.date_livraison) ? this.date_livraison = datas.date_livraison : this.date_livraison = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         this.montant = datas.montant;
         this.statut = datas.statut;
-        this.token = datas.token;
     }
 
     static all(){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY date_commande ASC";
+            const sql = "SELECT * FROM commande ORDER BY created_at ASC";
             db.query(sql, (error, result) => {
                 if (!error){
                     resolve(result)
@@ -50,10 +49,9 @@ class Commande{
 
     static findByStatut(statut){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY date_commande ASC";
+            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY created_at ASC";
             db.query(sql, statut, (error, result) => {
                 if (!error){
-                    console.log(result);
                     resolve(result)
                 }
                 else{
@@ -62,6 +60,26 @@ class Commande{
             })
         })
 
+    }
+
+    /**
+     * Récupère les commandes dans un intervalle
+     * @param start - Le numéro de la ligne de départ
+     * @param size - Le nombre de lignes à récupérer
+     * @return Promise
+     */
+    static findByPage(start, size){
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT * FROM commande ORDER BY created_at ASC LIMIT ?, ?";
+            db.query(sql, [start, size], (error, result) => {
+                if (!error){
+                    resolve(result)
+                }
+                else{
+                    reject(error)
+                }
+            })
+        })
     }
 
     save(){
@@ -85,8 +103,8 @@ class Commande{
             }
         }
         return new Promise((resolve, reject) => {
-            const sql = "UPDATE commande SET mail_client = ?, date_livraison = ?, montant = ?, statut = ? WHERE id = ?";
-            const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.id]
+            const sql = "UPDATE commande SET mail = ?, date_livraison = ?, montant = ?, statut = ? WHERE id = ?";
+            const values = [this.mail, this.date_livraison, this.montant, this.statut, this.id]
             db.query(sql, values, (error) => {
                 if(!error){
                     resolve(this)

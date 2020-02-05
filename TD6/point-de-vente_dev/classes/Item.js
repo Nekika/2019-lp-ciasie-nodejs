@@ -9,20 +9,19 @@ const db = mysql.createConnection({
     database: "command_lbs"
 });
 
-class Commande{
+class Item{
     constructor(datas){
         (datas.id) ? this.id = datas.id : this.id = uuid();
-        this.mail_client = datas.mail_client;
-        (datas.date_commande) ? this.date_commande = datas.date_commande : this.date_commande = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
-        (datas.date_livraison) ? this.date_livraison = datas.date_livraison : this.date_livraison = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
-        this.montant = datas.montant;
-        this.statut = datas.statut;
-        this.token = datas.token;
+        this.uri = datas.uri;
+        this.libelle = datas.libelle;
+        this.tarif = datas.tarif;
+        this.quantite = datas.quantite;
+        this.command_id = datas.command_id;
     }
 
     static all(){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY date_commande ASC";
+            const sql = "SELECT * FROM item";
             db.query(sql, (error, result) => {
                 if (!error){
                     resolve(result)
@@ -36,7 +35,7 @@ class Commande{
 
     static find(id){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE id = ?";
+            const sql = "SELECT * FROM item WHERE id = ?";
             db.query(sql, id, (error, result) => {
                 if (!error){
                     resolve(result[0])
@@ -48,12 +47,11 @@ class Commande{
         })
     }
 
-    static findByStatut(statut){
+    static findByCommande(statut){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY date_commande ASC";
+            const sql = "SELECT * FROM item WHERE command_id = ?";
             db.query(sql, statut, (error, result) => {
                 if (!error){
-                    console.log(result);
                     resolve(result)
                 }
                 else{
@@ -64,9 +62,29 @@ class Commande{
 
     }
 
+    /**
+     * Récupère les items dans un intervalle
+     * @param start - Le numéro de la ligne de départ
+     * @param size - Le nombre de lignes à récupérer
+     * @return Promise
+     */
+    static findByPage(start, size){
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT * FROM item LIMIT ?, ?";
+            db.query(sql, [start, size], (error, result) => {
+                if (!error){
+                    resolve(result)
+                }
+                else{
+                    reject(error)
+                }
+            })
+        })
+    }
+
     save(){
         return new Promise((resolve, reject) => {
-            const sql = "INSERT INTO commande SET ?";
+            const sql = "INSERT INTO item SET ?";
             db.query(sql, this, (error) => {
                 if (!error){
                     resolve()
@@ -85,8 +103,8 @@ class Commande{
             }
         }
         return new Promise((resolve, reject) => {
-            const sql = "UPDATE commande SET mail_client = ?, date_livraison = ?, montant = ?, statut = ? WHERE id = ?";
-            const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.id]
+            const sql = "UPDATE item SET uri = ?, libelle = ?, tarif = ?, quantite = ? WHERE command_id = ?";
+            const values = [this.uri, this.libelle, this.tarif, this.quantite, this.command_id]
             db.query(sql, values, (error) => {
                 if(!error){
                     resolve(this)
@@ -99,4 +117,4 @@ class Commande{
     }
 }
 
-module.exports = Commande;
+module.exports = Item;
