@@ -43,6 +43,7 @@ Item
 });
 
 // Récupération d'une commande par son ID
+<<<<<<< HEAD
 app.get('/commandes/:id', (req, res) => {
     const id = req.params.id;
     Commande.find(id)
@@ -88,7 +89,6 @@ app.get('/commandes/:id', (req, res) => {
         .catch((error) => {
             throw new Error(error);
         });
-});
 
 /******
  *

@@ -25,6 +25,9 @@ const HTTPCodes = {
             case 400:
                 message = "L'URI indiquée n'est pas connue de l'API";
                 break;
+            case 401:
+                message = "Authentification requise";
+                break;
             case 403:
                 message = "Accès non authorisé";
                 break;
