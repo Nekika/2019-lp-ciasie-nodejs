@@ -12,11 +12,13 @@ const db = mysql.createConnection({
 class Commande{
     constructor(datas){
         (datas.id) ? this.id = datas.id : this.id = uuid();
-        this.mail_client = datas.mail_client;
-        (datas.date_commande) ? this.date_commande = datas.date_commande : this.date_commande = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
-        (datas.date_livraison) ? this.date_livraison = datas.date_livraison : this.date_livraison = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
-        this.montant = datas.montant;
-        this.statut = datas.statut;
+        this.mail = datas.mail;
+        this.nom = datas.nom;
+        this.created_at = (datas.created_at) ? datas.created_at : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
+        this.date_paiement = (datas.date_paiement) ? datas.date_paiement : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
+        this.montant = datas.montant ? datas.montant : 0 ;
+        this.status = 0;
+        this.livraison = datas.livraison.date + ' ' + datas.livraison.heure ? datas.livraison.date + ' ' + datas.livraison.heure : this.created_at = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
     }
 
     static all(){

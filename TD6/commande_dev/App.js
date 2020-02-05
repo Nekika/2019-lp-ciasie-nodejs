@@ -2,10 +2,9 @@
 
 const express = require("express");
 const parser = require('body-parser');
-
+const crypto = require("crypto");
 const http = require('./tools/HTTPCodes');
 
-//const datas = require('./tools/Datas');
 
 const Commande = require('./classes/Commande');
 // Constantes
@@ -65,10 +64,26 @@ app.get("/commandes/:id", (req, res) => {
 app.post('/commandes', (req, res) => {
 
   const commande = new Commande(req.body);
+  const hash = crypto.randomBytes(16).toString('hex');
+  commande.token = hash;
+
   commande.save()
       .then(() => {
           const loc = 'localhost:19080/commandes/' + commande.id;
-          res.status(201).location(loc).json(commande)
+          const doc = {
+            'commande': {
+              nom: commande.nom,
+              mail: commande.mail,
+              livraison: {
+                date: commande.livraison.split(' ')[0],
+                heure: commande.livraison.split(' ')[1],
+              },
+              id: commande.id,
+              token: commande.token,
+              montant: commande.montant,
+            }
+          }
+          res.status(201).location(loc).json(doc)
       })
       .catch((error) => {
           console.log(error);
