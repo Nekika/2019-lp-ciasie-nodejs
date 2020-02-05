@@ -32,7 +32,6 @@ app.get("/", (req, res) => {
 
 // Récupération de toutes les commandes
 app.get("/commandes", (req, res) => {
-Item
     Commande.all()
       .then(commandes => {
         commandes ? res.json(commandes) : res.status(404).send(http.error(404))
