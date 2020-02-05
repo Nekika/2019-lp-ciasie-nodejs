@@ -62,6 +62,7 @@ app.get('/commandes/:id', (req, res) => {
                     nom: result.nom,
                     mail: result.mail,
                     montant: result.montant,
+                    token: result.token,
                     items: []
                 }
             };
