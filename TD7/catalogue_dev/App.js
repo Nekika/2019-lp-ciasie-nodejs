@@ -41,7 +41,7 @@ app.get("/categories", (req, res) => {
 
 
 app.get("/categories/:id/sandwichs", (req, res) => {
-   (err, categorie) => {
+    Categorie.find({ id: req.params.id }, (err, categorie) => {
         if (err) {
             return res.status(500).send(http.error(500));
         }
