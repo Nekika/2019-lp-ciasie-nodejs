@@ -14,11 +14,12 @@ class Commande{
         (datas.id) ? this.id = datas.id : this.id = uuid();
         this.mail = datas.mail;
         this.nom = datas.nom;
+        this.client_id = this.client_id;
         this.created_at = (datas.created_at) ? datas.created_at : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         this.date_paiement = (datas.date_paiement) ? datas.date_paiement : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
         this.montant = datas.montant ? datas.montant : 0 ;
         this.status = 0;
-        this.livraison = datas.livraison.date + ' ' + datas.livraison.heure ? datas.livraison.date + ' ' + datas.livraison.heure : this.created_at = date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
+        this.livraison = datas.livraison ? datas.livraison.date + ' ' + datas.livraison.heure : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
     }
 
     static all(){
@@ -86,8 +87,8 @@ class Commande{
             }
         }
         return new Promise((resolve, reject) => {
-            const sql = "UPDATE commande SET mail_client = ?, date_livraison = ?, montant = ?, statut = ? WHERE id = ?";
-            const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.id]
+            const sql = "UPDATE commande SET mail_client = ?, date_livraison = ?, montant = ?, statut = ?, client_id = ? WHERE id = ?";
+            const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.client_id, this.id]
             db.query(sql, values, (error) => {
                 if(!error){
                     resolve(this)
