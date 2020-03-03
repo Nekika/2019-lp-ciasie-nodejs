@@ -18,10 +18,13 @@ const PORT = 8080;
 const app = express();
 app.use(parser.json());
 
+// Middleware
+app.use(function (req, res) {
+
+});
+
 
 /* ----------------- Routing  ----------------- */
-
-
 
 /******
  *

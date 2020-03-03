@@ -64,28 +64,15 @@ const Data = {
         const email = data.mail;
         const date = data.livraison;
         const items = data.items;
-        const id = data.id;
-        if (!(name && email && date)){
-            return false
-        }
-        if (!checkName(name)){
-            return false
-        }
-        if (!checkEmail(email)){
-            return false
-        }
-        if (!checkDate(date)){
-            return false
-        }
-        if (id && !checkId(id)){
-            return false
-        }
-        if (!checkItems(items)){
-            return false
-        }
+        const id = data.client_id;
+        if (!(name && email && date)){ return false }
+        if (!checkName(name)){ return false }
+        if (!checkEmail(email)){ return false }
+        if (!checkDate(date)){ return false }
+        if (id && !checkId(id)){ return false }
+        if (items && !checkItems(items)){ return false }
         return true
     }
 };
 
 module.exports = Data;
-
