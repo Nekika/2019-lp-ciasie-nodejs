@@ -9,24 +9,19 @@ const db = mysql.createConnection({
     database: "command_lbs"
 });
 
-console.log(db);
-
-class Commande{
+class Client{
     constructor(datas){
         (datas.id) ? this.id = datas.id : this.id = uuid();
-        this.mail = datas.mail;
-        this.nom = datas.nom;
-        this.client_id = this.client_id;
-        this.created_at = (datas.created_at) ? datas.created_at : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
-        this.date_paiement = (datas.date_paiement) ? datas.date_paiement : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
-        this.montant = datas.montant ? datas.montant : 0 ;
-        this.status = 0;
-        this.livraison = datas.livraison ? datas.livraison.date + ' ' + datas.livraison.heure : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");
+        this.nom_client = datas.nom_client;
+        this.mail_client = datas.mail_client;
+        this.passwd = datas.passwd;
+        this.cumul_achats = datas.cumul_achats;
+        this.created_at = (datas.created_at) ? datas.created_at : date.format(new Date(), "YYYY-MM-DD HH:MM:SS");        this.cumul_achats = datas.cumul_achats ? datas.cumul_achats : 0 ;
     }
 
     static all(){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY created_at ASC";
+            const sql = "SELECT * FROM client";
             db.query(sql, (error, result) => {
                 if (!error){
                     resolve(result)
@@ -40,7 +35,7 @@ class Commande{
 
     static find(id){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE id = ?";
+            const sql = "SELECT * FROM client WHERE id = ?";
             db.query(sql, id, (error, result) => {
                 if (!error){
                     resolve(result[0])
@@ -52,25 +47,9 @@ class Commande{
         })
     }
 
-    static findByStatut(statut){
-        return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY created_at ASC";
-            db.query(sql, statut, (error, result) => {
-                if (!error){
-                    console.log(result);
-                    resolve(result)
-                }
-                else{
-                    reject(error)
-                }
-            })
-        })
-
-    }
-
     save(){
         return new Promise((resolve, reject) => {
-            const sql = "INSERT INTO commande SET ?";
+            const sql = "INSERT INTO client SET ?";
             db.query(sql, this, (error) => {
                 if (!error){
                     resolve()
@@ -89,8 +68,8 @@ class Commande{
             }
         }
         return new Promise((resolve, reject) => {
-            const sql = "UPDATE commande SET mail_client = ?, livraison = ?, montant = ?, statut = ?, client_id = ? WHERE id = ?";
-            const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.client_id, this.id]
+            const sql = "UPDATE client SET nom_client = ?, mail_client = ?, passwd = ?, cumul_achats = ? WHERE id = ?";
+            const values = [this.nom_client, this.mail_client, this.passwd, this.cumul_achats, this.id]
             db.query(sql, values, (error) => {
                 if(!error){
                     resolve(this)
@@ -103,4 +82,4 @@ class Commande{
     }
 }
 
-module.exports = Commande;
+module.exports = Client;
