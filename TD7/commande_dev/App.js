@@ -4,9 +4,13 @@ const express = require("express");
 const parser = require('body-parser');
 const crypto = require("crypto");
 const http = require('./tools/HTTPCodes');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const fs = require('fs');
 
 const Item = require('./classes/Item');
 const Commande = require('./classes/Commande');
+const Client = require('./classes/Client');
 // Constantes
 const PORT = 8080;
 
@@ -153,12 +157,94 @@ app.put('/commandes/:id', (req, res) => {
       })
 });
 
+// Auth
+app.post('/clients/:idClient/auth', (req, res) => {
+  const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
+
+  // const pwd = 'test' + privateKey;
+  // const saltRounds = 8;
+  // const hash = bcrypt.hashSync(pwd, saltRounds);
+
+
+  const tokenBase64 = req.headers.authorization.split(' ')[1];
+  if(!tokenBase64) {
+    res.status(401).send(http.error(401));
+    return;
+  }
+  const credentials = Buffer.from(tokenBase64, 'base64').toString('utf-8');
+  const [login, password] = credentials.split(':');
+
+  Client.find(req.params.idClient)
+  .then((user) => {
+    if(!user) {
+      res.status(401).send(http.error(401));
+      return;
+    }
+    if(login !== user.mail_client) {
+      res.status(401).send(http.error(401));
+      return;
+    }
+    bcrypt.compare(password + privateKey, user.passwd, (err, same) => {
+      if(err) {
+        throw err;
+      }
+      if(!same) {
+        res.status(401).send(http.error(401));
+        return;
+      }
+      const toSign = {
+        id: user.id
+      };
+      const token = jwt.sign(toSign, privateKey, {algorithm: 'HS256'});
+      res.send({token: token});
+    });
+  })
+  .catch(() => {
+    res.status(401).send(http.error(401));
+    return;
+  })
+});
+
+// show profil
+app.get('/clients/:id', (req, res) => {
+  const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
+  const token = req.headers.authorization.split(' ')[1];
+  if(!token) {
+    res.status(401).send(http.error(401, "No authorization token"));
+    return;
+  }
+
+  const idClient = req.params.id;
+  jwt.verify(token, privateKey, (err, decoded) => {
+    if(err) {
+      throw err;
+    }
+    if (!decoded || !decoded.id || Number(idClient) !== Number(decoded.id)) {
+      res.status(401).send(http.error(401, 'Invalid token'));
+      return;
+    }
+
+    Client.find(idClient)
+    .then((user) => {
+      if(!user) {
+        res.status(404).send(http.error(404));
+        return;
+      } 
+
+      return res.json(user);
+    })
+    .catch((err) => {
+      throw err;
+    });
+  });
+});
 
 app.all('*', (req, res) => {
   res.status(400).send(http.error(400))
 });
 
 app.use((error, req, res, next) => {
+  console.log(error);
   res.status(500).send(http.error(500))
 });
 
