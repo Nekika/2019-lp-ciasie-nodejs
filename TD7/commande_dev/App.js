@@ -176,22 +176,15 @@ app.post('/clients/:idClient/auth', (req, res) => {
 
   Client.find(req.params.idClient)
   .then((user) => {
-
-    if(login !== user.mail_client) {
-      res.status(401).send(http.error(401));
-      return;
-    }
-    
-    console.log(user);
-
     if(!user) {
       res.status(401).send(http.error(401));
       return;
     }
-
-    
+    if(login !== user.mail_client) {
+      res.status(401).send(http.error(401));
+      return;
+    }
     bcrypt.compare(password + privateKey, user.passwd, (err, same) => {
-      
       if(err) {
         throw err;
       }
@@ -199,8 +192,6 @@ app.post('/clients/:idClient/auth', (req, res) => {
         res.status(401).send(http.error(401));
         return;
       }
-     
-
       const toSign = {
         id: user.id
       };
@@ -214,6 +205,39 @@ app.post('/clients/:idClient/auth', (req, res) => {
   })
 });
 
+// show profil
+app.get('/clients/:id', (req, res) => {
+  const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
+  const token = req.headers.authorization.split(' ')[1];
+  if(!token) {
+    res.status(401).send(http.error(401, "No authorization token"));
+    return;
+  }
+
+  const idClient = req.params.id;
+  jwt.verify(token, privateKey, (err, decoded) => {
+    if(err) {
+      throw err;
+    }
+    if (!decoded || !decoded.id || Number(idClient) !== Number(decoded.id)) {
+      res.status(401).send(http.error(401, 'Invalid token'));
+      return;
+    }
+
+    Client.find(idClient)
+    .then((user) => {
+      if(!user) {
+        res.status(404).send(http.error(404));
+        return;
+      } 
+
+      return res.json(user);
+    })
+    .catch((err) => {
+      throw err;
+    });
+  });
+});
 
 app.all('*', (req, res) => {
   res.status(400).send(http.error(400))
