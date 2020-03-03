@@ -4,6 +4,7 @@ const express = require("express");
 const parser = require('body-parser');
 const crypto = require("crypto");
 const http = require('./tools/HTTPCodes');
+const cors = require('cors');
 
 const Item = require('./classes/Item');
 const Commande = require('./classes/Commande');
@@ -12,16 +13,12 @@ const Commande = require('./classes/Commande');
 const Data = require('./tools/Data');
 
 // Constantes
-const PORT = 8080;
-
-// App
-const app = express();
-app.use(parser.json());
+const app = express()
+const PORT = 3000;
 
 // Middleware
-app.use(function (req, res) {
-
-});
+app.use(parser.json());
+app.use(cors());
 
 
 /* ----------------- Routing  ----------------- */
