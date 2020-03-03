@@ -13,7 +13,7 @@ const Item = require('./classes/Item');
 const Commande = require('./classes/Commande');
 const Client = require('./classes/Client');
 // Constantes
-const PORT = 3000;
+const PORT = 8080;
 
 // App
 const app = express();
@@ -42,8 +42,9 @@ app.get("/commandes", (req, res) => {
     .then(commandes => {
       commandes ? res.json(commandes) : res.status(404).send(http.error(404))
     })
-    .catch((error) => {
-      throw error
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send(http.error(500))
     })
 });
 

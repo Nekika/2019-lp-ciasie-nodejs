@@ -19,14 +19,14 @@ const HTTPCodes = {
         }
         return this.base("Success", code, message)
     },
-    error: function(code, msg = null){
+    error: function(code){
         let message = null;
         switch (code) {
             case 400:
                 message = "L'URI indiquée n'est pas connue de l'API";
                 break;
             case 401:
-                message = msg || "no authorization header";
+                message = "no authorization header";
                 break;
             case 403:
                 message = "Accès non authorisé";

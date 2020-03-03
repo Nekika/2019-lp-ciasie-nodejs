@@ -9,8 +9,6 @@ const db = mysql.createConnection({
     database: "command_lbs"
 });
 
-console.log(db);
-
 class Commande{
     constructor(datas){
         (datas.id) ? this.id = datas.id : this.id = uuid();
@@ -54,7 +52,7 @@ class Commande{
 
     static findByStatut(statut){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY created_at ASC";
+            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY date_commande ASC";
             db.query(sql, statut, (error, result) => {
                 if (!error){
                     console.log(result);
@@ -89,7 +87,7 @@ class Commande{
             }
         }
         return new Promise((resolve, reject) => {
-            const sql = "UPDATE commande SET mail_client = ?, livraison = ?, montant = ?, statut = ?, client_id = ? WHERE id = ?";
+            const sql = "UPDATE commande SET mail_client = ?, date_livraison = ?, montant = ?, statut = ?, client_id = ? WHERE id = ?";
             const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.client_id, this.id]
             db.query(sql, values, (error) => {
                 if(!error){
