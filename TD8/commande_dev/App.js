@@ -7,6 +7,10 @@ const http = require('./tools/HTTPCodes');
 
 const Item = require('./classes/Item');
 const Commande = require('./classes/Commande');
+
+// Tools
+const Data = require('./tools/Data');
+
 // Constantes
 const PORT = 8080;
 
@@ -100,33 +104,36 @@ app.get('/commandes/:id', (req, res) => {
  ******/
 
 app.post('/commandes', (req, res) => {
+  if (!Data.isValid(data))  {
+      res.send('data invalid')
+  } else {
+      const commande = new Commande(req.body);
+      const hash = crypto.randomBytes(16).toString('hex');
+      commande.token = hash;
 
-  const commande = new Commande(req.body);
-  const hash = crypto.randomBytes(16).toString('hex');
-  commande.token = hash;
-
-  commande.save()
-      .then(() => {
-          const loc = 'localhost:19080/commandes/' + commande.id;
-          const doc = {
-            'commande': {
-              nom: commande.nom,
-              mail: commande.mail,
-              livraison: {
-                date: commande.livraison.split(' ')[0],
-                heure: commande.livraison.split(' ')[1],
-              },
-              id: commande.id,
-              token: commande.token,
-              montant: commande.montant,
-            }
-          }
-          res.status(201).location(loc).json(doc)
-      })
-      .catch((error) => {
-          console.log(error);
-          res.status(500).send(http.error(500))
-      })
+      commande.save()
+          .then(() => {
+              const loc = 'localhost:19080/commandes/' + commande.id;
+              const doc = {
+                  'commande': {
+                      nom: commande.nom,
+                      mail: commande.mail,
+                      livraison: {
+                          date: commande.livraison.split(' ')[0],
+                          heure: commande.livraison.split(' ')[1],
+                      },
+                      id: commande.id,
+                      token: commande.token,
+                      montant: commande.montant,
+                  }
+              };
+              res.status(201).location(loc).json(doc)
+          })
+          .catch((error) => {
+              console.log(error);
+              res.status(500).send(http.error(500))
+          })
+  }
 });
 
 /******
