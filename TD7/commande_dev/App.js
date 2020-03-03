@@ -40,7 +40,8 @@ app.get("/commandes", (req, res) => {
     .then(commandes => {
       commandes ? res.json(commandes) : res.status(404).send(http.error(404))
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err);
       res.status(500).send(http.error(500))
     })
 });

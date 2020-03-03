@@ -24,7 +24,7 @@ class Commande{
 
     static all(){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande ORDER BY date_commande ASC";
+            const sql = "SELECT * FROM commande ORDER BY created_at ASC";
             db.query(sql, (error, result) => {
                 if (!error){
                     resolve(result)
