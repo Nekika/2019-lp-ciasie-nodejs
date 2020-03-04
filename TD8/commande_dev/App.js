@@ -138,79 +138,82 @@ app.get('/commandes/:id', (req, res) => {
  * token (optionnel): voir la route post/clients/:idClient/auth pour le générer
  */
 app.post('/commandes', (req, res) => {
-
-  // recupére les informations fourni par l'utilisateur
-  const commande = new Commande(req.body);
-
-  //genere un token pour la commande
-  const hash = crypto.randomBytes(16).toString('hex');
-  commande.token = hash;
-
-  const client_id = req.body.client_id;
-  const auth_token = req.headers.authorization.split(' ')[1];
-  const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
-
-  //construction du resultat
-  const doc = {
-    'commande': {
-      nom: commande.nom,
-      mail: commande.mail,
-      livraison: {
-        date: commande.livraison.split(' ')[0],
-        heure: commande.livraison.split(' ')[1],
-      },
-      id: commande.id,
-      token: commande.token,
-      montant: commande.montant,
-    }
-  };
-
-  // Si le user veut créer une commande fidélisé
-  // On recupère l'id du client et le token de verification (creer lors de l'authentification)
-  if (client_id && auth_token) {
-    // On verfifie le token
-    const decoded = jwt.verify(auth_token, privateKey);
-    if (!decoded || !decoded.id || Number(decoded.id) !== Number(client_id)) {
-      return res.status(401).send(http.error(401, 'Invalid auth token'));
-    }
-
-    //On recupere le client
-    Client.find(client_id)
-      .then((client) => {
-        // On verfie que le client correpsond au token
-        if (client) {
-          //on  associe la commande au client
-          commande.client_id = client_id;
-          doc.commande.client_id = client_id;
-
-          //on met a jour le montant cumule du client
-          client.cumul_achats += commande.montant;
-          (new Client(client)).update(client);
-        }
-
-        //On enregistre la commande
-        commande.save()
-          .then(() => {
-            res.status(201).json(doc);
-          })
-          .catch((error) => {
-            console.log(error);
-            res.status(500).send(http.error(500))
-          });
-      })
-      .catch(err => {
-        throw err;
-      });
+  if (!validator.isValid(req.body)) {
+    res.status(500).send(http.error(500))
   } else {
-    //On enregistre la commande sans l'associer à un client
-    commande.save()
-      .then(() => {
-        res.status(201).json(doc);
-      })
-      .catch((error) => {
-        console.log(error);
-        res.status(500).send(http.error(500))
-      });
+    // recupére les informations fourni par l'utilisateur
+    const commande = new Commande(req.body);
+
+    //genere un token pour la commande
+    const hash = crypto.randomBytes(16).toString('hex');
+    commande.token = hash;
+
+    const client_id = req.body.client_id;
+    const auth_token = req.headers.authorization.split(' ')[1];
+    const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
+
+    //construction du resultat
+    const doc = {
+      'commande': {
+        nom: commande.nom,
+        mail: commande.mail,
+        livraison: {
+          date: commande.livraison.split(' ')[0],
+          heure: commande.livraison.split(' ')[1],
+        },
+        id: commande.id,
+        token: commande.token,
+        montant: commande.montant,
+      }
+    };
+
+    // Si le user veut créer une commande fidélisé
+    // On recupère l'id du client et le token de verification (creer lors de l'authentification)
+    if (client_id && auth_token) {
+      // On verfifie le token
+      const decoded = jwt.verify(auth_token, privateKey);
+      if (!decoded || !decoded.id || Number(decoded.id) !== Number(client_id)) {
+        return res.status(401).send(http.error(401, 'Invalid auth token'));
+      }
+
+      //On recupere le client
+      Client.find(client_id)
+        .then((client) => {
+          // On verfie que le client correpsond au token
+          if (client) {
+            //on  associe la commande au client
+            commande.client_id = client_id;
+            doc.commande.client_id = client_id;
+
+            //on met a jour le montant cumule du client
+            client.cumul_achats += commande.montant;
+            (new Client(client)).update(client);
+          }
+
+          //On enregistre la commande
+          commande.save()
+            .then(() => {
+              res.status(201).json(doc);
+            })
+            .catch((error) => {
+              console.log(error);
+              res.status(500).send(http.error(500))
+            });
+        })
+        .catch(err => {
+          throw err;
+        });
+    } else {
+      //On enregistre la commande sans l'associer à un client
+      commande.save()
+        .then(() => {
+          res.status(201).json(doc);
+        })
+        .catch((error) => {
+          console.log(error);
+          res.status(500).send(http.error(500))
+        });
+    }
   }
 });
 
@@ -275,64 +278,64 @@ app.post('/clients/:idClient/auth', (req, res) => {
   if (!validator.isValid(req.body)) {
     res.status(500).send(http.error(500))
   } else {
-  // Clé secrète utiliser dans bcrypt et jwt
-  const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
+    // Clé secrète utiliser dans bcrypt et jwt
+    const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
 
-  /* Pour generer un mot de passe */
-  // const pwd = 'test' + privateKey;
-  // const saltRounds = 8;
-  // const hash = bcrypt.hashSync(pwd, saltRounds);
-  // console.log(hash);
-  // prendre le hash
+    /* Pour generer un mot de passe */
+    // const pwd = 'test' + privateKey;
+    // const saltRounds = 8;
+    // const hash = bcrypt.hashSync(pwd, saltRounds);
+    // console.log(hash);
+    // prendre le hash
 
-  // recupère les infos de connexion en base 64
-  const tokenBase64 = req.headers.authorization.split(' ')[1];
-  if (!tokenBase64) {
-    res.status(401).send(http.error(401));
-    return;
-  }
+    // recupère les infos de connexion en base 64
+    const tokenBase64 = req.headers.authorization.split(' ')[1];
+    if (!tokenBase64) {
+      res.status(401).send(http.error(401));
+      return;
+    }
 
-  // conversion de base64 à texte
-  const credentials = Buffer.from(tokenBase64, 'base64').toString('utf-8');
-  const [login, password] = credentials.split(':');
+    // conversion de base64 à texte
+    const credentials = Buffer.from(tokenBase64, 'base64').toString('utf-8');
+    const [login, password] = credentials.split(':');
 
-  // Cherche le client correspondant à l'id dans l'url
-  Client.find(req.params.idClient)
-    .then((user) => {
-      if (!user) {
-        res.status(401).send(http.error(401));
-        return;
-      }
-
-      //verfie l'email avec l'utilisateur trouv"
-      if (login !== user.mail_client) {
-        res.status(401).send(http.error(401));
-        return;
-      }
-
-      //verifie le mot de passe entré
-      bcrypt.compare(password + privateKey, user.passwd, (err, same) => {
-        if (err) {
-          throw err;
-        }
-        if (!same) {
+    // Cherche le client correspondant à l'id dans l'url
+    Client.find(req.params.idClient)
+      .then((user) => {
+        if (!user) {
           res.status(401).send(http.error(401));
           return;
         }
 
-        //information à signer dans le token
-        const toSign = {
-          id: user.id
-        };
+        //verfie l'email avec l'utilisateur trouv"
+        if (login !== user.mail_client) {
+          res.status(401).send(http.error(401));
+          return;
+        }
 
-        //création et envoie du token
-        const token = jwt.sign(toSign, privateKey, { algorithm: 'HS256' });
-        res.send({ token: token });
-      });
-    })
-    .catch((err) => {
-      throw err;
-    })
+        //verifie le mot de passe entré
+        bcrypt.compare(password + privateKey, user.passwd, (err, same) => {
+          if (err) {
+            throw err;
+          }
+          if (!same) {
+            res.status(401).send(http.error(401));
+            return;
+          }
+
+          //information à signer dans le token
+          const toSign = {
+            id: user.id
+          };
+
+          //création et envoie du token
+          const token = jwt.sign(toSign, privateKey, { algorithm: 'HS256' });
+          res.send({ token: token });
+        });
+      })
+      .catch((err) => {
+        throw err;
+      })
   }
 });
 

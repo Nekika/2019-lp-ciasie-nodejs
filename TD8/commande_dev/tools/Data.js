@@ -20,8 +20,9 @@ const checkName = function (name) {
  * @return boolean
  */
 const checkEmail = function (email) {
-    const regex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
-    return regex.test(email)
+    const newEmail = email.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    const regex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/i);
+    return regex.test(newEmail)
 };
 
 /**
@@ -72,17 +73,17 @@ const Data = {
         const name = data.nom;
         const email = data.mail;
         const date = data.livraison.date;
-
         const heure = data.livraison.heure;
         const items = data.items;
         const id = data.client_id;
         if (!(name && email && date && heure)) { return false }
         if (!checkName(name)) { return false }
-        if (!checkEmail(email)) { return false }
-        if (!checkDate(date)) { return false }
-        if (!checkHour(heure)) { return false }
-        if (id && !checkId(id)) { return false }
+        if (!checkEmail(email)) { console.log('tttttt');return false }
+        if (!checkDate(date)) { console.log('tttt'); return false }
+        if (!checkHour(heure)) {  console.log('tt'); return false }
+        if (id && !checkId(id)) { console.log('ttt'); return false }
         if (items && !checkItems(items)) { return false }
+        console.log('ttttttt')
         return true
     }
 };
