@@ -55,7 +55,6 @@ class Commande{
             const sql = "SELECT * FROM commande WHERE status = ? ORDER BY date_commande ASC";
             db.query(sql, status, (error, result) => {
                 if (!error){
-                    console.log(result);
                     resolve(result)
                 }
                 else{

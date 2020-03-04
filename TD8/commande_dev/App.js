@@ -9,6 +9,8 @@ const bcrypt = require('bcrypt');
 const fs = require('fs');
 const cors = require('cors');
 
+const validator = require('./tools/Data');
+
 const Item = require('./classes/Item');
 const Commande = require('./classes/Commande');
 const Client = require('./classes/Client');
@@ -87,7 +89,7 @@ app.get('/commandes/:id', (req, res) => {
           items: []
         }
       };
-      
+
       // Recupère tous les items de la commande
       Item.findByCommande(id).then((result) => {
         if (!result) {
@@ -103,7 +105,7 @@ app.get('/commandes/:id', (req, res) => {
           }
           output.command.items.push(toAdd)
         })
-        
+
         return res.json(output);
       }).catch((error) => {
         throw new Error(error);
@@ -136,6 +138,7 @@ app.get('/commandes/:id', (req, res) => {
  * token (optionnel): voir la route post/clients/:idClient/auth pour le générer
  */
 app.post('/commandes', (req, res) => {
+
   // recupére les informations fourni par l'utilisateur
   const commande = new Commande(req.body);
 
@@ -194,7 +197,6 @@ app.post('/commandes', (req, res) => {
             console.log(error);
             res.status(500).send(http.error(500))
           });
-        console.log('9');
       })
       .catch(err => {
         throw err;
@@ -202,14 +204,13 @@ app.post('/commandes', (req, res) => {
   } else {
     //On enregistre la commande sans l'associer à un client
     commande.save()
-    .then(() => {
-      res.status(201).json(doc);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send(http.error(500))
-    });
-    console.log('10');
+      .then(() => {
+        res.status(201).json(doc);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).send(http.error(500))
+      });
   }
 });
 
@@ -238,22 +239,24 @@ app.post('/commandes', (req, res) => {
  *
  */
 app.put('/commandes/:id', (req, res) => {
-  const putDatas = req.body;
-  Commande.find(req.params.id)
-    .then(datas => {
-      const commande = new Commande(datas);
-      return commande.update(putDatas)
-    })
-    .then((com) => {
-      res.status(200).json(com)
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send(http.error(500))
-    })
+  if (!validator.isValid(req.body)) {
+    res.status(500).send(http.error(500))
+  } else {
+    const putDatas = req.body;
+    Commande.find(req.params.id)
+      .then(datas => {
+        const commande = new Commande(datas);
+        return commande.update(putDatas)
+      })
+      .then((com) => {
+        res.status(200).json(com)
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).send(http.error(500))
+      })
+  }
 });
-
-
 
 /**
  * Permet l'authentification d'un client
@@ -269,6 +272,9 @@ app.put('/commandes/:id', (req, res) => {
  * 
  */
 app.post('/clients/:idClient/auth', (req, res) => {
+  if (!validator.isValid(req.body)) {
+    res.status(500).send(http.error(500))
+  } else {
   // Clé secrète utiliser dans bcrypt et jwt
   const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
 
@@ -282,7 +288,6 @@ app.post('/clients/:idClient/auth', (req, res) => {
   // recupère les infos de connexion en base 64
   const tokenBase64 = req.headers.authorization.split(' ')[1];
   if (!tokenBase64) {
-    console.log("1");
     res.status(401).send(http.error(401));
     return;
   }
@@ -295,26 +300,22 @@ app.post('/clients/:idClient/auth', (req, res) => {
   Client.find(req.params.idClient)
     .then((user) => {
       if (!user) {
-        console.log("2");
         res.status(401).send(http.error(401));
         return;
       }
 
       //verfie l'email avec l'utilisateur trouv"
       if (login !== user.mail_client) {
-        console.log("3");
         res.status(401).send(http.error(401));
         return;
       }
 
       //verifie le mot de passe entré
       bcrypt.compare(password + privateKey, user.passwd, (err, same) => {
-        console.log('4')
         if (err) {
           throw err;
         }
         if (!same) {
-          console.log('!=')
           res.status(401).send(http.error(401));
           return;
         }
@@ -323,7 +324,7 @@ app.post('/clients/:idClient/auth', (req, res) => {
         const toSign = {
           id: user.id
         };
-        
+
         //création et envoie du token
         const token = jwt.sign(toSign, privateKey, { algorithm: 'HS256' });
         res.send({ token: token });
@@ -332,6 +333,7 @@ app.post('/clients/:idClient/auth', (req, res) => {
     .catch((err) => {
       throw err;
     })
+  }
 });
 
 /**
