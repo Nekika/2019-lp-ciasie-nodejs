@@ -277,6 +277,7 @@ app.post('/clients/:idClient/auth', (req, res) => {
   // const saltRounds = 8;
   // const hash = bcrypt.hashSync(pwd, saltRounds);
   // console.log(hash);
+  // prendre le hash
 
   // recupère les infos de connexion en base 64
   const tokenBase64 = req.headers.authorization.split(' ')[1];
@@ -340,23 +341,32 @@ app.post('/clients/:idClient/auth', (req, res) => {
  * token : voir la route post/clients/:idClient/auth pour le générer
  */
 app.get('/clients/:id', (req, res) => {
+  //recupere la cle privee pour bcrypt et jwt
   const privateKey = fs.readFileSync('./jwt_secret.txt', 'utf-8');
+
+  //recupere le token de verification (fourni lors de l'authentification)
   const token = req.headers.authorization.split(' ')[1];
   if (!token) {
     res.status(401).send(http.error(401, "No authorization token"));
     return;
   }
 
+  //recupere l'id du client dna sl'url
   const idClient = req.params.id;
+
+  //verifify le token
   jwt.verify(token, privateKey, (err, decoded) => {
     if (err) {
       throw err;
     }
+
+    // Si l'id dans le token ne correspond pas on renvoie 401
     if (!decoded || !decoded.id || Number(idClient) !== Number(decoded.id)) {
       res.status(401).send(http.error(401, 'Invalid token'));
       return;
     }
 
+    //Si ca correspond, on recupere le client associé
     Client.find(idClient)
       .then((user) => {
         if (!user) {
@@ -364,6 +374,7 @@ app.get('/clients/:id', (req, res) => {
           return;
         }
 
+        //envoie des infos du client
         return res.json({
           user: {
             id: user.id,
