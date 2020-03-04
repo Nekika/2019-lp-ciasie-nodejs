@@ -25,18 +25,20 @@ app.use(parser.json());
 
 /**
  * Racine - Accés non autorisé
- * URL de test : http://localhost:19280
+ * URL de test : http://localhost:19280/
  */
 app.get("/", (req, res) => {
-    res.status(403).send(http.error(403))
+    res.status(403).send(http.error(403));
 });
 
 /**
  * Liste des commandes
- * URL de test : http://localhost:19280/commandes
+ * Possibilité de pagination avec les argument page et size
+ * URL de test : http://localhost:19280/commandes?page=1&?size=2
  */
 app.get("/commandes", (req, res) => {
     if (req.query.statut){
+            if(size > 100) size = 100;
         Collection.filteredByStatut(req.query.statut).then(collection => { res.json(collection) })
     }
     else if (req.query.page){
@@ -44,7 +46,7 @@ app.get("/commandes", (req, res) => {
         if (typeof size === 'string'){
             size =  Number.parseInt(size, 10)
         }
-        Collection.filteredByPage(req.query.page, size).then(collection => { res.json(collection) })
+    Collection.filteredByPage(req.query.page, size).then(collection => { res.json(collection) })
     }
     else{
         Collection.all().then(collection => { res.json(collection) })
@@ -62,6 +64,7 @@ app.get('/commandes/:id', (req, res) => {
         if(!result) {
             return res.status(404).send(http.error(404));
         }
+        // mise en page du retour
         const output = {
             type: "resources",
             links: {
