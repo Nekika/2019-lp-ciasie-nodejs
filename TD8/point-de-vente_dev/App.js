@@ -23,12 +23,18 @@ app.use(parser.json());
 *
 ******/
 
-// Root
+/**
+ * Racine - Accés non autorisé
+ * URL de test : http://localhost:19280
+ */
 app.get("/", (req, res) => {
     res.status(403).send(http.error(403))
 });
 
-// Récupération de toutes les commandes
+/**
+ * Liste des commandes
+ * URL de test : http://localhost:19280/commandes
+ */
 app.get("/commandes", (req, res) => {
     if (req.query.statut){
         Collection.filteredByStatut(req.query.statut).then(collection => { res.json(collection) })
@@ -45,6 +51,10 @@ app.get("/commandes", (req, res) => {
     }
 });
 
+/**
+ * Détails d'une commande
+ * URL de test : http://localhost:19280/commandes/cdf6302b-940b-4348-b913-3cb2052bf042
+ */
 app.get('/commandes/:id', (req, res) => {
     const id = req.params.id;
     Commande.find(id)
@@ -92,6 +102,9 @@ app.get('/commandes/:id', (req, res) => {
     });
 });
 
+/**
+ * Renvoie une erreur 'Bad request' car la route n'a pas été définie
+ */
 app.all('*', (req, res) => {
     res.status(400).send(http.error(400))
 });
