@@ -78,12 +78,11 @@ const Data = {
         const id = data.client_id;
         if (!(name && email && date && heure)) { return false }
         if (!checkName(name)) { return false }
-        if (!checkEmail(email)) { console.log('tttttt');return false }
-        if (!checkDate(date)) { console.log('tttt'); return false }
-        if (!checkHour(heure)) {  console.log('tt'); return false }
-        if (id && !checkId(id)) { console.log('ttt'); return false }
+        if (!checkEmail(email)) { return false }
+        if (!checkDate(date)) { return false }
+        if (!checkHour(heure)) { return false }
+        if (id && !checkId(id)) { return false }
         if (items && !checkItems(items)) { return false }
-        console.log('ttttttt')
         return true
     }
 };
