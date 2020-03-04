@@ -69,7 +69,7 @@ services:
     networks:
       - lbs.net
     volumes:
-      - ./commande_api/sql:/var/sql
+      - ./db/:/docker-entrypoint-initdb.d/
 
   adminer:
     image: adminer
