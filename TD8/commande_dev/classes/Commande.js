@@ -50,10 +50,10 @@ class Commande{
         })
     }
 
-    static findByStatut(statut){
+    static findByStatut(status){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM commande WHERE statut = ? ORDER BY date_commande ASC";
-            db.query(sql, statut, (error, result) => {
+            const sql = "SELECT * FROM commande WHERE status = ? ORDER BY date_commande ASC";
+            db.query(sql, status, (error, result) => {
                 if (!error){
                     console.log(result);
                     resolve(result)
@@ -87,8 +87,8 @@ class Commande{
             }
         }
         return new Promise((resolve, reject) => {
-            const sql = "UPDATE commande SET mail_client = ?, date_livraison = ?, montant = ?, statut = ?, client_id = ? WHERE id = ?";
-            const values = [this.mail_client, this.date_livraison, this.montant, this.statut, this.client_id, this.id]
+            const sql = "UPDATE commande SET mail = ?, livraison = ?, montant = ?, status = ?, client_id = ? WHERE id = ?";
+            const values = [this.mail, this.livraison.date + ' ' + this.livraison.heure, this.montant, this.status, this.client_id, this.id]
             db.query(sql, values, (error) => {
                 if(!error){
                     resolve(this)
