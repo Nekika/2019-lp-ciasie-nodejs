@@ -29,7 +29,10 @@ mongoose.connect("mongodb://mongo.cat:dbcat/catalogue", {
 
 /* ----------------- Routing  ----------------- */
 
-//récupération de toutes les catégories
+/**
+ * récupération de toutes les catégories
+ * URL de test: localhost:19180/categories
+ */
 app.get("/categories", (req, res) => {
     Categorie.find({}, (err, result) => {
         if (err) {
@@ -39,8 +42,12 @@ app.get("/categories", (req, res) => {
     });
 });
 
-
+/**
+ * récupération pour récuperer les sandwichs d'une catégorie selon son id
+ * URL de test: localhost:19180/categories/2/sandwichs
+ */
 app.get("/categories/:id/sandwichs", (req, res) => {
+    // On recuperer la catégorie avec l'id correspondant
     Categorie.find({ id: req.params.id }, (err, categorie) => {
         if (err) {
             return res.status(500).send(http.error(500));
@@ -48,11 +55,16 @@ app.get("/categories/:id/sandwichs", (req, res) => {
         if (categorie.length !== 1) {
             return res.status(404).send(http.error(404));
         }
+
+        //Nom de la catergorie utilisé pour la selection des sandwich
         const categorieName = categorie[0].nom;
+
+        // On recupère le sandwich selon le nom de la catégorie
         Sandwich.find({ categories: categorieName }, (err, sandwiches) => {
             if (err) {
                 res.status(500).send(http.error(500));
             }
+            // mise en page de la réponse
             const collection = {
                 type: "collection",
                 count: sandwiches.length,
@@ -68,8 +80,12 @@ app.get("/categories/:id/sandwichs", (req, res) => {
     });
 });
 
-//récupération de toutes les catégories
+/**
+ * récupération d'une catégorie selon son id
+ * URL de test: localhost:19180/categories/2
+ */
 app.get("/categories/:id", (req, res) => {
+    // On recuperer la catégorie avec l'id correspondant
     Categorie.find({id : req.params.id}, (err, result) => {
         if (err) {
             res.status(500).send(http.error(404));
@@ -77,6 +93,7 @@ app.get("/categories/:id", (req, res) => {
         if (result.length !== 1) {
             return res.status(404).send(http.error(404));
         }
+        // mise en page de la réponse
         const categorie = {
             type: "ressource",
             date: new Date().toLocaleDateString(),
@@ -107,11 +124,12 @@ app.get("/", (req, res) => {
 });
 
 
-
+// Renvoie une erreur "Bad Request" car la route n'a pas été trouvé
 app.all('*', (req, res) => {
     res.status(400).send(http.error(400))
 });
 
+// Renvoie une erreur 500 si une erreur est throw
 app.use((error, req, res, next) => {
     console.log(error);
     res.status(500).send(http.error(500))
