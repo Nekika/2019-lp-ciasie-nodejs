@@ -37,8 +37,13 @@ app.get("/", (req, res) => {
 });
 
 /**
- * Récupération de toutes les commandes
  * URL de test : localhost:19080/commandes
+ * @api {get} /commandes Liste des commandes
+ * @apiName GetCommandes
+ * @apiGroup Commandes
+ * 
+ * @apiSuccess {Commandes} Commandes Liste des commandes
+ * @apiError 404 Aucunes commandes récupérées
  */
 app.get("/commandes", (req, res) => {
   Commande.all()
@@ -55,6 +60,20 @@ app.get("/commandes", (req, res) => {
  * Récupération d'une commande
  * URL de test : localhost:19080/commandes/cdf6302b-940b-4348-b913-3cb2052bf042
  * token : 543fc479e422715feb9562809cdd9ca54528426fae2ec0ff2382a32b937555c3
+ * 
+ * @api {get} /commandes/:id Commande par son id
+ * @apiName GetCommandeById
+ * @apiGroup Commandes
+ * 
+ * @apiHeader (Authorization) {bearer} token token de vérification de la commande (alternative au passage tu token dans la query string)
+ * 
+ * @apiParam (URI) {UUID} id id de la commande
+ * @apiParam (QUERY) {String} token token de vérification de la commande (alternative au passage du token dans le header Autorization)
+ * 
+ * @apiSuccess {Commande} Commande Informations de la commande et ses items
+ * @apiError 401 Aucun token n'a été fourni
+ * @apiError 403 Le token est incorrect
+ * @apiError 404 L'id ne correspond pas à une commande
  */
 app.get('/commandes/:id', (req, res) => {
   // recurpere l'autorization token soit dans l'url soit dans le header
@@ -116,12 +135,6 @@ app.get('/commandes/:id', (req, res) => {
     });
 });
 
-/******
- *
- * Méthode POST
- *
- ******/
-
 /**
  * Permet de créer une commande
  * URL de test : localhost:19080/commande
@@ -129,13 +142,28 @@ app.get('/commandes/:id', (req, res) => {
  *  "nom": "Andrée Ledoux",
  *  "mail": "Andrée.Ledoux@club-internet.fr",
  *  "livraison": {
- *  "date": "2021-12-7",
- *  "heure": "12:30:00"
- * },
+ *    "date": "2021-12-7",
+ *    "heure": "12:30:00"
+ *  },
  * "id": "e3786989-e0d2-4cfb-a72f-455ca4a16beb",
  * "montant": 10
  * }
  * token (optionnel): voir la route post/clients/:idClient/auth pour le générer
+ * 
+ * @api {post} /commandes/ Création d'une commande
+ * @apiName PostCommande
+ * @apiGroup Commandes
+ * 
+ * @apiHeader (Authorization) {bearer} token token de connexion du client (optionel)
+ * 
+ * @apiParam (BODY) {UUID} client_id id du client (uniquement si token client)
+ * @apiParam (BODY) {String} nom nom et prenom du client
+ * @apiParam (BODY) {String} mail email du client
+ * @apiParam (BODY) {Object} livraison date de livraison { "date": "YYYY-MM-DD", "heure": "HH:MN:SS"}
+ * @apiParam (BODY) {Number} montant montant de la commande
+ * 
+ * @apiSuccess {Commande} Commande Informations de la nouvelle commande, notamment son token de verification
+ * @apiError 401 Le token fourni ne correspond pas au client 
  */
 app.post('/commande', (req, res) => {
   if (!validator.isValid(req.body)) {
@@ -217,12 +245,6 @@ app.post('/commande', (req, res) => {
   }
 });
 
-/******
- *
- * Méthode PUT
- *
- ******/
-
 /**
  * Met à jour les données d'une commande
  * URL de test : localhost:19080/commandes/cdf6302b-940b-4348-b913-3cb2052bf042	
@@ -239,6 +261,18 @@ app.post('/commande', (req, res) => {
  * "543fc479e422715feb9562809cdd9ca54528426fae2ec0ff2382a32b937555c3",
  * "montant": 40.25
  * }
+ * 
+ * @api {put} /commandes/:id Mise à jour d'une commande
+ * @apiName PutCommande
+ * @apiGroup Commandes
+ * 
+ * @apiParam (URI) {UUID} id id de la commande à modifier
+ * @apiParam (BODY) {String} nom nom et prenom du client
+ * @apiParam (BODY) {String} mail email du client
+ * @apiParam (BODY) {Object} livraison date de livraison { "date": "YYYY-MM-DD", "heure": "HH:MN:SS"}
+ * @apiParam (BODY) {Number} montant montant de la commande
+ * 
+ * @apiSuccess {Commande} Commande Informations de la nouvelle commande
  *
  */
 app.put('/commandes/:id', (req, res) => {
@@ -272,6 +306,17 @@ app.put('/commandes/:id', (req, res) => {
  * Authorization
  *  Username: Andrée.Ledoux@club-internet.fr
  *  Password: test
+ * 
+ * @api {post} /clients/:id/auth Authentification d'un client
+ * @apiName AuthClient
+ * @apiGroup Clients
+ * 
+ * @apiHeader (Authorization) {basic} email:password email et mot de passe de l'utlisateur encodés en base64
+ * 
+ * @apiParam (URI) {UUID} id id du client au authentifier
+ * 
+ * @apiSuccess {String} Token Token d'identification du client
+ * @apiError 401 Aucunes données d'authentification dans le header, les données ne correspondent pas au client 
  * 
  */
 app.post('/clients/:idClient/auth', (req, res) => {
@@ -344,6 +389,18 @@ app.post('/clients/:idClient/auth', (req, res) => {
  * 
  * URL de test : localhost:19080/clients/59
  * token : voir la route post/clients/:idClient/auth pour le générer
+ * 
+ * @api {get} /clients/:id Profil d'un client
+ * @apiName GetClient
+ * @apiGroup Clients
+ * 
+ * @apiHeader (Authorization) {bearer} token token d'authentification du client
+ * 
+ * @apiParam (URI) {UUID} id id du client
+ * 
+ * @apiSuccess {Object} client Profil du client (id, nom_client, mail_client, cumul_achats)
+ * @apiError 401 Aucun token d'authentification dans le header, le token ne corresponde pas au client 
+ * 
  */
 app.get('/clients/:id', (req, res) => {
   //recupere la cle privee pour bcrypt et jwt
