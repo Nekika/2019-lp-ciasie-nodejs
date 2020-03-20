@@ -35,6 +35,12 @@ app.get("/", (req, res) => {
  * Liste des commandes
  * Possibilité de pagination avec les argument page et size
  * URL de test : http://localhost:19280/commandes?page=1&?size=2
+ * 
+ * @api {get} /commandes Liste des commandes
+ * @apiName GetCommandes
+ * @apiGroup Commandes
+ * 
+ * @apiSuccess {Commandes} Commandes Listes des commandes
  */
 app.get("/commandes", (req, res) => {
     if (req.query.statut){
@@ -56,6 +62,15 @@ app.get("/commandes", (req, res) => {
 /**
  * Détails d'une commande
  * URL de test : http://localhost:19280/commandes/cdf6302b-940b-4348-b913-3cb2052bf042
+ * 
+ * @api {get} /commandes/:id Commandes par son ID
+ * @apiName GetCommandeById
+ * @apiGroup Commandes
+ * 
+ * @apiParam (URI) {UUID} id Id de la commande
+ * 
+ * @apiSuccess {Commande} commande Informations de la commande (id, livraison, nom, mail, montants, items)
+ * @apiError 404 L'id ne correspond à aucune commande
  */
 app.get('/commandes/:id', (req, res) => {
     const id = req.params.id;
