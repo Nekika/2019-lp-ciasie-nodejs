@@ -1,6 +1,6 @@
 {
-    "name": "example",
+    "name": "Catalogue",
     "version": "0.1.0",
-    "description": "apiDoc basic example",
-    "title": "Custom apiDoc browser title"
+    "description": "api du service catalogue",
+    "title": "Doc - API Catalogue"
 }
