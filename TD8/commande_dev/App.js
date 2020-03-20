@@ -124,7 +124,7 @@ app.get('/commandes/:id', (req, res) => {
 
 /**
  * Permet de créer une commande
- * URL de test : localhost:19080/commandes
+ * URL de test : localhost:19080/commande
  * {
  *  "nom": "Andrée Ledoux",
  *  "mail": "Andrée.Ledoux@club-internet.fr",
@@ -137,7 +137,7 @@ app.get('/commandes/:id', (req, res) => {
  * }
  * token (optionnel): voir la route post/clients/:idClient/auth pour le générer
  */
-app.post('/commandes', (req, res) => {
+app.post('/commande', (req, res) => {
   if (!validator.isValid(req.body)) {
     res.status(500).send(http.error(500))
   } else {

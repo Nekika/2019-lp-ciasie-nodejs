@@ -36,11 +36,11 @@ mongoose.connect("mongodb://mongo.cat:dbcat/catalogue", {
 
 
 /**
- * @api {get} /categories récupération de toutes les catégories
+ * @api {get} /categories Récupération de toutes les catégories
  * @apiName GetCategories
  * @apiGroup Categories
  * 
- * @apiSuccess {Categories} data Liste des categories.
+ * @apiSuccess {Categories} categories Liste des categories.
  */
 app.get("/categories", (req, res) => {
     Categorie.find({}, (err, result) => {
@@ -52,13 +52,14 @@ app.get("/categories", (req, res) => {
 });
 
 /**
- * @api {get} /categories/:id/sandwichs récupération ds sandwichs d'une catégorie selon son id
+ * @api {get} /categories/:id/sandwichs Récupération ds sandwichs d'une catégorie selon son id
  * @apiName GetCategories
  * @apiGroup Categories
  * 
  * @apiParam {UUID} id Id de la catégorie.
  * 
- * @apiSuccess {Sandwichs} data des sandwichs correspondant à la catégorie.
+ * @apiSuccess {Sandwichs} sandwichs Données des sandwichs correspondant à la catégorie.
+ * @apiError SandwichsNotFound L'id de la catégorie n'est pas correct.
  * 
  */
 app.get("/categories/:id/sandwichs", (req, res) => {
@@ -96,13 +97,13 @@ app.get("/categories/:id/sandwichs", (req, res) => {
 });
 
 /**
- * @api {get} /categories/:id  récupération d'une catégorie selon son id
+ * @api {get} /categories/:id Récupération d'une catégorie selon son id
  * @apiName GetCategories
  * @apiGroup Categories
  * 
  * @apiParam {UUID} id Id de la catégorie
  * 
- * @apiSuccess {Categorie} data informations de la catégorie
+ * @apiSuccess {Categorie} categorie Informations de la catégorie
  */
 app.get("/categories/:id", (req, res) => {
     // On recuperer la catégorie avec l'id correspondant
